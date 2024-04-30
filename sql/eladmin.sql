@@ -237,7 +237,8 @@ CREATE TABLE `sys_dict` (
 -- Records of sys_dict
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_dict` VALUES (1, 'user_status', '用户状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict` VALUES (1, 'sys_config', '系统默认配置', NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict` VALUES (3, 'user_status', '用户状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
 INSERT INTO `sys_dict` VALUES (4, 'dept_status', '部门状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
 INSERT INTO `sys_dict` VALUES (5, 'job_status', '岗位状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
 COMMIT;
@@ -264,8 +265,9 @@ CREATE TABLE `sys_dict_detail` (
 -- Records of sys_dict_detail
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_dict_detail` VALUES (1, 1, '激活', 'true', 1, NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict_detail` VALUES (2, 1, '禁用', 'false', 2, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_dict_detail` VALUES (1, 1, 'default_pwd', '123456', 1, NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict_detail` VALUES (1, 3, '激活', 'true', 1, NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict_detail` VALUES (2, 3, '禁用', 'false', 2, NULL, NULL, NULL, NULL);
 INSERT INTO `sys_dict_detail` VALUES (3, 4, '启用', 'true', 1, NULL, NULL, NULL, NULL);
 INSERT INTO `sys_dict_detail` VALUES (4, 4, '停用', 'false', 2, NULL, NULL, '2019-10-27 20:31:36', NULL);
 INSERT INTO `sys_dict_detail` VALUES (5, 5, '启用', 'true', 1, NULL, NULL, NULL, NULL);
@@ -615,7 +617,6 @@ INSERT INTO `sys_roles_menus` VALUES (112, 1);
 INSERT INTO `sys_roles_menus` VALUES (113, 1);
 INSERT INTO `sys_roles_menus` VALUES (114, 1);
 INSERT INTO `sys_roles_menus` VALUES (116, 1);
-INSERT INTO `sys_roles_menus` VALUES (120, 1);
 INSERT INTO `sys_roles_menus` VALUES (1, 2);
 INSERT INTO `sys_roles_menus` VALUES (2, 2);
 INSERT INTO `sys_roles_menus` VALUES (6, 2);

@@ -15,7 +15,13 @@
  */
 package me.zhengjie.modules.system.service.impl;
 
+import cn.hutool.core.collection.ListUtil;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.config.SystemProperties;
+import me.zhengjie.modules.system.domain.Dict;
+import me.zhengjie.modules.system.domain.DictDetail;
+import me.zhengjie.modules.system.service.DictDetailService;
+import me.zhengjie.modules.system.service.DictService;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.config.FileProperties;
 import me.zhengjie.exception.BadRequestException;
@@ -60,6 +66,9 @@ public class UserServiceImpl implements UserService {
     private final UserCacheManager userCacheManager;
     private final OnlineUserService onlineUserService;
     private final UserLoginMapper userLoginMapper;
+    private final DictDetailService dictDetailService;
+    private final DictService dictService;
+    private final SystemProperties systemProperties;
 
     @Override
     public PageResult<UserDto> queryAll(UserQueryCriteria criteria, Pageable pageable) {
@@ -200,6 +209,31 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void resetPwd(Set<Long> ids, String pwd) {
         userRepository.resetPwd(ids, pwd);
+    }
+
+    @Override
+    public String findDefaultPwd() {
+        String key = systemProperties.getConfig().getClass().getSimpleName().toLowerCase(Locale.ROOT);
+        List<DictDetailDto> dictDetailDtos = dictDetailService.getDictByName(key);
+        for (DictDetailDto detail : dictDetailDtos){
+            if (detail.getLabel().equals(systemProperties.getConfig().getPwd().getKey())){
+                return detail.getValue();
+            }
+        }
+        Dict dict = new Dict();
+        dict.setName(key);
+        dict.setDescription(systemProperties.getConfig().getName());
+
+        DictDetail dictDetail = new DictDetail();
+        dictDetail.setLabel(systemProperties.getConfig().getPwd().getKey());
+        dictDetail.setValue(systemProperties.getConfig().getPwd().getVal());
+        dictDetail.setDictSort(0);
+        dictDetail.setDict(dict);
+
+        dict.setDictDetails(ListUtil.list(false,dictDetail));
+        dictService.create(dict);
+        redisUtils.set(CacheKey.DICT_NAME + dict.getName(),dict);
+        return systemProperties.getConfig().getPwd().getVal();
     }
 
     @Override

@@ -20,21 +20,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
+import me.zhengjie.modules.system.service.*;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.config.RsaProperties;
 import me.zhengjie.modules.system.domain.Dept;
-import me.zhengjie.modules.system.service.DataService;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.vo.UserPassVo;
-import me.zhengjie.modules.system.service.DeptService;
-import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.service.dto.RoleSmallDto;
 import me.zhengjie.modules.system.service.dto.UserDto;
 import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
-import me.zhengjie.modules.system.service.VerifyService;
 import me.zhengjie.utils.*;
-import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.utils.enums.CodeEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -67,6 +63,7 @@ public class UserController {
     private final DeptService deptService;
     private final RoleService roleService;
     private final VerifyService verificationCodeService;
+    private final DictDetailService dictDetailService;
 
     @ApiOperation("导出用户数据")
     @GetMapping(value = "/download")
@@ -109,8 +106,9 @@ public class UserController {
     @PreAuthorize("@el.check('user:add')")
     public ResponseEntity<Object> createUser(@Validated @RequestBody User resources){
         checkLevel(resources);
+
         // 默认密码 123456
-        resources.setPassword(passwordEncoder.encode("123456"));
+        resources.setPassword(passwordEncoder.encode(userService.findDefaultPwd()));
         userService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -171,7 +169,7 @@ public class UserController {
     @ApiOperation("重置密码")
     @PutMapping(value = "/resetPwd")
     public ResponseEntity<Object> resetPwd(@RequestBody Set<Long> ids) {
-        String pwd = passwordEncoder.encode("123456");
+        String pwd = passwordEncoder.encode(userService.findDefaultPwd());
         userService.resetPwd(ids, pwd);
         return new ResponseEntity<>(HttpStatus.OK);
     }

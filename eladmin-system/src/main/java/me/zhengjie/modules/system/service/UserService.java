@@ -130,4 +130,10 @@ public interface UserService {
      * @param pwd 密码
      */
     void resetPwd(Set<Long> ids, String pwd);
+
+    /**
+     * 查询用户默认密码
+     * @return
+     */
+    String findDefaultPwd();
 }
