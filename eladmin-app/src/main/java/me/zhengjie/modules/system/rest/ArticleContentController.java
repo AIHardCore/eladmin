@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
@@ -40,7 +39,7 @@ import me.zhengjie.utils.PageResult;
 @RestController
 @RequiredArgsConstructor
 @Api(tags = " 文章正文管理")
-@RequestMapping("/api/articleContent")
+@RequestMapping("/app/articleContent")
 public class ArticleContentController {
 
     private final ArticleContentService articleContentService;
@@ -48,7 +47,6 @@ public class ArticleContentController {
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('articleContent:list')")
     public void exportArticleContent(HttpServletResponse response, ArticleContentQueryCriteria criteria) throws IOException {
         articleContentService.download(articleContentService.queryAll(criteria), response);
     }
@@ -56,7 +54,6 @@ public class ArticleContentController {
     @GetMapping
     @Log("查询 文章正文")
     @ApiOperation("查询 文章正文")
-    @PreAuthorize("@el.check('articleContent:list')")
     public ResponseEntity<PageResult<ArticleBodyDto>> queryArticleContent(ArticleContentQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(articleContentService.queryAll(criteria,pageable),HttpStatus.OK);
     }
@@ -64,7 +61,6 @@ public class ArticleContentController {
     @PostMapping
     @Log("新增 文章正文")
     @ApiOperation("新增 文章正文")
-    @PreAuthorize("@el.check('articleContent:add')")
     public ResponseEntity<Object> createArticleContent(@Validated @RequestBody ArticleBody resources){
         articleContentService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -73,7 +69,6 @@ public class ArticleContentController {
     @PutMapping
     @Log("修改 文章正文")
     @ApiOperation("修改 文章正文")
-    @PreAuthorize("@el.check('articleContent:edit')")
     public ResponseEntity<Object> updateArticleContent(@Validated @RequestBody ArticleBody resources){
         articleContentService.update(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -82,8 +77,7 @@ public class ArticleContentController {
     @DeleteMapping
     @Log("删除 文章正文")
     @ApiOperation("删除 文章正文")
-    @PreAuthorize("@el.check('articleContent:del')")
-    public ResponseEntity<Object> deleteArticleContent(@RequestBody Integer[] ids) {
+    public ResponseEntity<Object> deleteArticleContent(@RequestBody Long[] ids) {
         articleContentService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

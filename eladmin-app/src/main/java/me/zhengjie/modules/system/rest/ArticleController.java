@@ -15,17 +15,21 @@
 */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.system.service.ArticleService;
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
-import me.zhengjie.utils.PageResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
 * @website https://eladmin.vip
@@ -35,22 +39,22 @@ import me.zhengjie.utils.PageResult;
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "文章管理")
-@RequestMapping("/api/article")
+@RequestMapping("/app/article")
 public class ArticleController {
 
     private final ArticleService articleService;
 
     @GetMapping
-    @Log("查询文章")
+    @Log(value = "查询文章",module = "文章")
     @ApiOperation("查询文章")
     public ResponseEntity<PageResult<ArticleDto>> queryArticle(ArticleQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(articleService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
-    @GetMapping(value = "/detail/{id}")
+    @GetMapping(value = "/{id}")
     @Log("文章详情")
     @ApiOperation("文章详情")
-    public ResponseEntity<ArticleDto> detail(@PathVariable Integer id){
+    public ResponseEntity<ArticleDto> detail(@PathVariable Long id){
         return new ResponseEntity<>(articleService.findById(id),HttpStatus.OK);
     }
 }

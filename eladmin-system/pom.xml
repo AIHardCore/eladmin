@@ -16,6 +16,8 @@
         <jjwt.version>0.11.5</jjwt.version>
         <!-- oshi监控需要指定jna版本, 问题详见 https://github.com/oshi/oshi/issues/1040 -->
         <jna.version>5.8.0</jna.version>
+        <!-- 定义打包后的文件存放位置，一般为项目名， -->
+        <package.path>${project.build.directory}/Jar</package.path>
     </properties>
 
     <dependencies>
@@ -90,18 +92,94 @@
 
     <!-- 打包 -->
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <!-- 跳过单元测试 -->
+            <!-- 开始处理启动模块jar包， -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <!--在启动模块的jar中排除以下文件类型,这是为了避免启动模块jar和后续的config目录下存在两份相同资源文件从而导致项目无法重启-->
+                    <excludes>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>**/*.yml</exclude>
+                    </excludes>
+                    <archive>
+                        <manifest>
+                            <!-- 执行的主程序路径 -->
+                            <mainClass>me.zhengjie.AppRun</mainClass>
+                            <!--是否要把第三方jar放到manifest的classpath中-->
+                            <addClasspath>true</addClasspath>
+                            <!--生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/-->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- 打包时 MANIFEST.MF 文件不记录的时间戳版本 -->
+                            <useUniqueVersions>false</useUniqueVersions>
+                        </manifest>
+                        <manifestEntries>
+                            <!-- 在 Class-Path 下添加配置文件的路径 -->
+                            <Class-Path>../config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                    <!-- 将启动模块的jar包也输出到${package.path}下 -->
+                    <outputDirectory>${package.path}/</outputDirectory>
                 </configuration>
+            </plugin>
+            <!-- 开始处理依赖包，将所有资源文件拷贝到${package.path}/lib下 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${package.path}/lib/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 开始处理资源文件，将所有资源文件拷贝到${package.path}/config下 -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <!--把配置文件打包到指定路径-->
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${package.path}/config</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!--copy 脚本，把bin目录下的文件复制到，打包目录下-->
+                    <execution>
+                        <id>copy-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <!--注意：此处bin脚本目录在src下，根据实际情况填写-->
+                                    <directory>src/bin/</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${package.path}/bin</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

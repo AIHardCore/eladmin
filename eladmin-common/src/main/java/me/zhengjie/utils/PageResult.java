@@ -10,7 +10,20 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class PageResult<T> {
 
-    private final List<T> content;
+    private  List<T> content;
 
-    private final long totalElements;
+    private long totalElements;
+
+    private long totalPage;
+
+    public PageResult(List<T> content, long totalElements){
+        this.content = content;
+        this.totalElements = totalElements;
+    }
+
+    public PageResult(List<T> content, long totalElements, long totalPage){
+        this.content = content;
+        this.totalElements = totalElements;
+        this.totalPage = totalPage;
+    }
 }

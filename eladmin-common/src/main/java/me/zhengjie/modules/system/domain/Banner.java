@@ -23,7 +23,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import org.hibernate.annotations.*;
+
+import me.zhengjie.base.BaseEntity;
 import java.sql.Timestamp;
 import java.io.Serializable;
 
@@ -36,21 +37,22 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name="app_banner")
-public class Banner implements Serializable {
+public class Banner extends BaseEntity implements Serializable {
 
     @Id
     @Column(name = "`id`")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(value = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "`img`",nullable = false)
     @NotBlank
     @ApiModelProperty(value = "图片")
     private String img;
 
-    @Column(name = "`url`")
-    @ApiModelProperty(value = "跳转地址")
-    private String url;
+    @Column(name = "`专栏id`")
+    @ApiModelProperty(value = "专栏id")
+    private Long special;
 
     @Column(name = "`sort`")
     @ApiModelProperty(value = "排序")
@@ -70,24 +72,6 @@ public class Banner implements Serializable {
     @NotNull
     @ApiModelProperty(value = "结束时间")
     private Timestamp endTime;
-
-    @Column(name = "`create_by`")
-    @ApiModelProperty(value = "创建者")
-    private String createBy;
-
-    @Column(name = "`update_by`")
-    @ApiModelProperty(value = "更新者")
-    private String updateBy;
-
-    @Column(name = "`create_time`")
-    @CreationTimestamp
-    @ApiModelProperty(value = "创建日期")
-    private Timestamp createTime;
-
-    @Column(name = "`update_time`")
-    @UpdateTimestamp
-    @ApiModelProperty(value = "更新时间")
-    private Timestamp updateTime;
 
     @Column(name = "`describe`")
     @ApiModelProperty(value = "描述")

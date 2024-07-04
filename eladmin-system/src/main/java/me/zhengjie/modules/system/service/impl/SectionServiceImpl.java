@@ -64,7 +64,7 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     @Transactional
-    public SectionDto findById(Integer id) {
+    public SectionDto findById(Long id) {
         Section section = sectionRepository.findById(id).orElseGet(Section::new);
         ValidationUtil.isNull(section.getId(),"Section","id",id);
         return sectionMapper.toDto(section);
@@ -86,8 +86,8 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
+    public void deleteAll(Long[] ids) {
+        for (Long id : ids) {
             sectionRepository.deleteById(id);
         }
     }

@@ -5,8 +5,8 @@ spring:
       db-type: com.alibaba.druid.pool.DruidDataSource
       driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       url: jdbc:log4jdbc:mysql://${DB_HOST:192.168.119.3}:${DB_PORT:3306}/${DB_NAME:eladmin}?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
-      username: root
-      password: OSaDPjYkwP7Ruu0Nja0QiyFtOOfcJFYvLncITwIscHg9DYuskK0L/+K8AUO8YRD//qA24k+zPFTeaj/VflCF4g==
+      username: ${DB_USER:root}
+      password: ${DB_PWD:Pm61eYnRnsjb1GWvJFiBo50opiEe5y+bShA9DluhMZj3xM262LwBlVcwhwrKHpzou4Z3mh/RmXn6hEeXCnzbeQ==}
       # 配置监控统计拦截的 Filter，去掉后监控界面 SQL 无法统计，wall 用于防火墙,config用于解密
       filters: config
       # 通过 connection-properties 属性打开 mergeSql 功能；慢 SQL 记录
@@ -80,21 +80,21 @@ login:
 
 #jwt
 jwt:
-  header: Authorization
+  header: Token
   # 令牌前缀
   token-start-with: Bearer
   # 必须使用最少88位的Base64对该令牌进行编码
   base64-secret: ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI=
-  # 令牌过期时间 此处单位/毫秒 ，默认4小时，可在此网站生成 https://www.convertworld.com/zh-hans/time/milliseconds.html
-  token-validity-in-seconds: 14400000
+  # 令牌过期时间 此处单位/天 ，默认7天，可在此网站生成 https://www.convertworld.com/zh-hans/time/milliseconds.html
+  token-validity-in-seconds: 7
   # 在线用户key
   online-key: "online-token:"
   # 验证码
   code-key: "captcha-code:"
   # token 续期检查时间范围（默认30分钟，单位毫秒），在token即将过期的一段时间内用户操作了，则给用户的token续期
   detect: 1800000
-  # 续期时间范围，默认1小时，单位毫秒
-  renew: 3600000
+  # 续期时间范围，默认1天，单位毫秒
+  renew: 86400000
 
 #是否允许生成代码，生产环境设置为false
 generator:

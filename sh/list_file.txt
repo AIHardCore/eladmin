@@ -1,0 +1,10 @@
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin-web/dist /home/xxj/webs/eladmin/ 1
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/eladmin-app.jar /home/xxj/server/xxj_app/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-common-2.7.jar /home/xxj/server/xxj_app/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-logging-2.7.jar /home/xxj/server/xxj_app/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-tools-2.7.jar /home/xxj/server/xxj_app/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-system.jar /home/xxj/server/eladmin/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-common-2.7.jar /home/xxj/server/eladmin/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-logging-2.7.jar /home/xxj/server/eladmin/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-tools-2.7.jar /home/xxj/server/eladmin/ 2
+/mnt/h/AllWorkSpase/IDEA_WorkSpase/eladmin/eladmin-app/target/Jar/lib/eladmin-generator-2.7.jar /home/xxj/server/eladmin/ 2

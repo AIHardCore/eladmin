@@ -53,7 +53,7 @@ public interface ArticleContentService {
      * @param id ID
      * @return ArticleBodyDto
      */
-    ArticleBodyDto findById(Integer id);
+    ArticleBodyDto findById(Long id);
 
     /**
     * 创建
@@ -71,7 +71,7 @@ public interface ArticleContentService {
     * 多选删除
     * @param ids /
     */
-    void deleteAll(Integer[] ids);
+    void deleteAll(Long[] ids);
 
     /**
     * 导出数据

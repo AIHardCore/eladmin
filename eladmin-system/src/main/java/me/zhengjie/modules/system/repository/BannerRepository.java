@@ -24,5 +24,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @author hardcore
 * @date 2024-06-20
 **/
-public interface BannerRepository extends JpaRepository<Banner, Integer>, JpaSpecificationExecutor<Banner> {
+public interface BannerRepository extends JpaRepository<Banner, Long>, JpaSpecificationExecutor<Banner> {
 }

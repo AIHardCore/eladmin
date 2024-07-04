@@ -83,7 +83,7 @@ public class SectionController {
     @Log("删除版块")
     @ApiOperation("删除版块")
     @PreAuthorize("@el.check('section:del')")
-    public ResponseEntity<Object> deleteSection(@RequestBody Integer[] ids) {
+    public ResponseEntity<Object> deleteSection(@RequestBody Long[] ids) {
         sectionService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

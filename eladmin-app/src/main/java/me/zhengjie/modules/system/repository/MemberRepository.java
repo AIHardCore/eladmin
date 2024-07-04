@@ -18,11 +18,22 @@ package me.zhengjie.modules.system.repository;
 import me.zhengjie.modules.system.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 /**
 * @website https://eladmin.vip
 * @author hardcore
 * @date 2024-06-19
 **/
-public interface MemberRepository extends JpaRepository<Member, Integer>, JpaSpecificationExecutor<Member> {
+public interface MemberRepository extends JpaRepository<Member, String>, JpaSpecificationExecutor<Member> {
+    Member findByNickName(String nickName);
+
+    @Modifying
+    @Query(value = "update app_member set phone = ?2 where open_id = ?1 ",nativeQuery = true)
+    void updatePhone(String openId, String phone);
+
+    Member findByOpenId(String openId);
 }

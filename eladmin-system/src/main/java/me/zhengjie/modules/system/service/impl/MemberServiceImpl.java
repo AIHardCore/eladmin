@@ -15,9 +15,9 @@
 */
 package me.zhengjie.modules.system.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import me.zhengjie.modules.system.domain.Member;
-import me.zhengjie.utils.ValidationUtil;
-import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.*;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.repository.MemberRepository;
 import me.zhengjie.modules.system.service.MemberService;
@@ -28,15 +28,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
+
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
@@ -64,30 +62,31 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberDto findById(Integer id) {
+    public MemberDto findById(String id) {
         Member member = memberRepository.findById(id).orElseGet(Member::new);
-        ValidationUtil.isNull(member.getId(),"Member","id",id);
+        ValidationUtil.isNull(member.getOpenId(),"Member","openId",id);
         return memberMapper.toDto(member);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(Member resources) {
+        resources.setOpenId(RandomUtil.randomString(32));
         memberRepository.save(resources);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(Member resources) {
-        Member member = memberRepository.findById(resources.getId()).orElseGet(Member::new);
-        ValidationUtil.isNull( member.getId(),"Member","id",resources.getId());
+        Member member = memberRepository.findById(resources.getOpenId()).orElseGet(Member::new);
+        ValidationUtil.isNull( member.getOpenId(),"Member","openId",resources.getOpenId());
         member.copy(resources);
         memberRepository.save(member);
     }
 
     @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
+    public void deleteAll(String[] ids) {
+        for (String id : ids) {
             memberRepository.deleteById(id);
         }
     }
@@ -97,11 +96,12 @@ public class MemberServiceImpl implements MemberService {
         List<Map<String, Object>> list = new ArrayList<>();
         for (MemberDto member : all) {
             Map<String,Object> map = new LinkedHashMap<>();
-            map.put("appid", member.getAppid());
+            map.put("openId", member.getOpenId());
             map.put("昵称", member.getNickName());
-            map.put("头像", member.getAvater());
+            map.put("头像", member.getHeadImgUrl());
             map.put("用户类型", member.getType());
             map.put("VIP到期时间", member.getVipExpiration());
+            map.put("类型", member.getType());
             map.put("状态", member.getEnabled());
             map.put("创建时间", member.getCreateTime());
             map.put("更新时间", member.getUpdateTime());

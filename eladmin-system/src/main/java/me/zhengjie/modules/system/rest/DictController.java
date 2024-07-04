@@ -25,7 +25,6 @@ import me.zhengjie.modules.system.service.DictService;
 import me.zhengjie.modules.system.service.dto.DictDto;
 import me.zhengjie.modules.system.service.dto.DictQueryCriteria;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

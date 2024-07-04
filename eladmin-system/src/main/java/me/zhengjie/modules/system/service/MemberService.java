@@ -53,7 +53,7 @@ public interface MemberService {
      * @param id ID
      * @return MemberDto
      */
-    MemberDto findById(Integer id);
+    MemberDto findById(String id);
 
     /**
     * 创建
@@ -71,7 +71,7 @@ public interface MemberService {
     * 多选删除
     * @param ids /
     */
-    void deleteAll(Integer[] ids);
+    void deleteAll(String[] ids);
 
     /**
     * 导出数据

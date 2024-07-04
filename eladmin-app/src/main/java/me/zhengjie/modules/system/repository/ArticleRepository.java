@@ -18,11 +18,24 @@ package me.zhengjie.modules.system.repository;
 import me.zhengjie.modules.system.domain.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 /**
 * @website https://eladmin.vip
 * @author hardcore
 * @date 2024-06-19
 **/
-public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+    Optional<Article> findByIdAndEnabled(Long id, Boolean enabled);
+
+    /**
+     * 阅读量+1
+     * @param id
+     */
+    @Modifying
+    @Query(value = "update app_article set reading = reading + 1 where id = ?1 and version = ?2",nativeQuery = true)
+    void read(Long id, int version);
 }

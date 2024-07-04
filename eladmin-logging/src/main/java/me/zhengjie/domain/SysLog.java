@@ -18,6 +18,7 @@ package me.zhengjie.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
@@ -48,6 +49,12 @@ public class SysLog implements Serializable {
     /** 方法名 */
     private String method;
 
+    /** 类型 */
+    private LogTypeEnum type;
+
+    /** 模块名称 */
+    private String module;
+
     /** 参数 */
     private String params;
 
@@ -73,8 +80,17 @@ public class SysLog implements Serializable {
     @CreationTimestamp
     private Timestamp createTime;
 
-    public SysLog(String logType, Long time) {
+    public SysLog(String logType, Long time, LogTypeEnum type) {
         this.logType = logType;
         this.time = time;
+        this.type = type;
+        this.module = module;
+    }
+
+    public SysLog(String logType, Long time, LogTypeEnum type, String module) {
+        this.logType = logType;
+        this.time = time;
+        this.type = type;
+        this.module = module;
     }
 }

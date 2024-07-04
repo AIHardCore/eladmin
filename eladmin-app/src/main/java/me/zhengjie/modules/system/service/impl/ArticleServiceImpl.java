@@ -15,28 +15,29 @@
 */
 package me.zhengjie.modules.system.service.impl;
 
-import me.zhengjie.modules.system.service.ArticleService;
-import me.zhengjie.modules.system.mapstruct.ArticleMapper;
-import me.zhengjie.modules.system.repository.ArticleRepository;
+import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.domain.Article;
+import me.zhengjie.modules.system.domain.ArticleBody;
+import me.zhengjie.modules.system.domain.Member;
+import me.zhengjie.modules.system.repository.ArticleBodyRepository;
+import me.zhengjie.modules.system.repository.MemberRepository;
+import me.zhengjie.modules.system.service.ArticleService;
+import me.zhengjie.modules.system.service.async.AsyncArticleService;
+import me.zhengjie.modules.system.service.mapstruct.ArticleMapper;
+import me.zhengjie.modules.system.repository.ArticleRepository;
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
-import me.zhengjie.utils.ValidationUtil;
-import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
+
+import javax.persistence.OptimisticLockException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 * @website https://eladmin.vip
@@ -50,6 +51,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ArticleMapper articleMapper;
+    private final ArticleBodyRepository articleBodyRepository;
+    private final MemberRepository memberRepository;
+    private final AsyncArticleService asyncArticleService;
 
     @Override
     public PageResult<ArticleDto> queryAll(ArticleQueryCriteria criteria, Pageable pageable){
@@ -64,53 +68,17 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public ArticleDto findById(Integer id) {
-        Article article = articleRepository.findById(id).orElseGet(Article::new);
+    public ArticleDto findById(Long id) {
+        Article article = articleRepository.findByIdAndEnabled(id,true).orElseGet(Article::new);
         ValidationUtil.isNull(article.getId(),"Article","id",id);
+        JwtUserDto jwtUserDto = (JwtUserDto) SecurityUtils.getCurrentUser();
+        Member member = memberRepository.findById(jwtUserDto.getUser().getOpenId()).orElseGet(Member::new);
+        ValidationUtil.isNull(member.getOpenId(),"Member","openId",jwtUserDto.getUser().getOpenId());
+        if (member.getType()){
+            ArticleBody articleBody = articleBodyRepository.findById(article.getId()).orElseGet(ArticleBody::new);
+            article.setBody(articleBody.getBody());
+            asyncArticleService.read(article.getId());
+        }
         return articleMapper.toDto(article);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void create(Article resources) {
-        articleRepository.save(resources);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void update(Article resources) {
-        Article article = articleRepository.findById(resources.getId()).orElseGet(Article::new);
-        ValidationUtil.isNull( article.getId(),"Article","id",resources.getId());
-        article.copy(resources);
-        articleRepository.save(article);
-    }
-
-    @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
-            articleRepository.deleteById(id);
-        }
-    }
-
-    @Override
-    public void download(List<ArticleDto> all, HttpServletResponse response) throws IOException {
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (ArticleDto article : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
-            map.put("标题", article.getTitle());
-            map.put("封面", article.getCover());
-            map.put("版块", article.getSection().getName());
-            map.put("预览内容", article.getPreview());
-            //map.put("内容", article.getContent());
-            map.put("状态", article.getEnabled());
-            map.put("排序", article.getSort());
-            map.put("阅读量", article.getReading());
-            map.put("创建人", article.getCreateBy());
-            map.put("修改人", article.getUpdateBy());
-            map.put("创建时间", article.getCreateTime());
-            map.put("更新时间", article.getUpdateTime());
-            list.add(map);
-        }
-        FileUtil.downloadExcel(list, response);
     }
 }

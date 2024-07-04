@@ -16,6 +16,8 @@
 package me.zhengjie.modules.system.service.dto;
 
 import lombok.Data;
+import me.zhengjie.base.BaseDTO;
+
 import java.sql.Timestamp;
 import java.io.Serializable;
 
@@ -26,15 +28,15 @@ import java.io.Serializable;
 * @date 2024-06-20
 **/
 @Data
-public class BannerDto implements Serializable {
+public class BannerDto extends BaseDTO implements Serializable {
 
-    private Integer id;
+    private Long id;
 
     /** 图片 */
     private String img;
 
     /** 跳转地址 */
-    private String url;
+    private Long special;
 
     /** 排序 */
     private Integer sort;
@@ -47,18 +49,6 @@ public class BannerDto implements Serializable {
 
     /** 结束时间 */
     private Timestamp endTime;
-
-    /** 创建者 */
-    private String createBy;
-
-    /** 更新者 */
-    private String updateBy;
-
-    /** 创建日期 */
-    private Timestamp createTime;
-
-    /** 更新时间 */
-    private Timestamp updateTime;
 
     /** 描述 */
     private String describe;

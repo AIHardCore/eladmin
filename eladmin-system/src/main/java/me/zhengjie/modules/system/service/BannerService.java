@@ -19,7 +19,7 @@ import me.zhengjie.modules.system.domain.Banner;
 import me.zhengjie.modules.system.service.dto.BannerDto;
 import me.zhengjie.modules.system.service.dto.BannerQueryCriteria;
 import org.springframework.data.domain.Pageable;
-import java.util.Map;
+
 import java.util.List;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +53,7 @@ public interface BannerService {
      * @param id ID
      * @return BannerDto
      */
-    BannerDto findById(Integer id);
+    BannerDto findById(Long id);
 
     /**
     * 创建
@@ -71,7 +71,7 @@ public interface BannerService {
     * 多选删除
     * @param ids /
     */
-    void deleteAll(Integer[] ids);
+    void deleteAll(Long[] ids);
 
     /**
     * 导出数据

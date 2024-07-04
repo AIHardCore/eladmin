@@ -16,10 +16,10 @@
 package me.zhengjie.modules.system.service.impl;
 
 import me.zhengjie.modules.system.domain.ArticleBody;
-import me.zhengjie.modules.system.mapstruct.ArticleContentMapper;
-import me.zhengjie.modules.system.repository.ArticleContentRepository;
+import me.zhengjie.modules.system.repository.ArticleBodyRepository;
 import me.zhengjie.modules.system.service.dto.ArticleBodyDto;
 import me.zhengjie.modules.system.service.dto.ArticleContentQueryCriteria;
+import me.zhengjie.modules.system.service.mapstruct.ArticleBodyMapper;
 import me.zhengjie.utils.ValidationUtil;
 import me.zhengjie.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -48,62 +48,62 @@ import me.zhengjie.utils.PageResult;
 @RequiredArgsConstructor
 public class ArticleContentServiceImpl implements ArticleContentService {
 
-    private final ArticleContentRepository articleContentRepository;
-    private final ArticleContentMapper articleContentMapper;
+    private final ArticleBodyRepository articleBodyRepository;
+    private final ArticleBodyMapper articleBodyMapper;
 
     @Override
     public PageResult<ArticleBodyDto> queryAll(ArticleContentQueryCriteria criteria, Pageable pageable){
-        Page<ArticleBody> page = articleContentRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page.map(articleContentMapper::toDto));
+        Page<ArticleBody> page = articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        return PageUtil.toPage(page.map(articleBodyMapper::toDto));
     }
 
     @Override
     public List<ArticleBodyDto> queryAll(ArticleContentQueryCriteria criteria){
-        return articleContentMapper.toDto(articleContentRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        return articleBodyMapper.toDto(articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
     }
 
     @Override
     @Transactional
-    public ArticleBodyDto findById(Integer id) {
-        ArticleBody articleBody = articleContentRepository.findById(id).orElseGet(me.zhengjie.modules.system.domain.ArticleBody::new);
-        ValidationUtil.isNull(articleBody.getId(),"ArticleBody","id",id);
-        return articleContentMapper.toDto(articleBody);
+    public ArticleBodyDto findById(Long id) {
+        ArticleBody articleBody = articleBodyRepository.findById(id).orElseGet(me.zhengjie.modules.system.domain.ArticleBody::new);
+        ValidationUtil.isNull(articleBody.getArticleId(),"ArticleBody","id",id);
+        return articleBodyMapper.toDto(articleBody);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(ArticleBody resources) {
-        articleContentRepository.save(resources);
+        articleBodyRepository.save(resources);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(ArticleBody resources) {
-        ArticleBody articleBody = articleContentRepository.findById(resources.getId()).orElseGet(ArticleBody::new);
-        ValidationUtil.isNull( articleBody.getId(),"ArticleBody","id",resources.getId());
+        ArticleBody articleBody = articleBodyRepository.findById(resources.getArticleId()).orElseGet(ArticleBody::new);
+        ValidationUtil.isNull( articleBody.getArticleId(),"ArticleBody","id",resources.getArticleId());
         articleBody.copy(resources);
-        articleContentRepository.save(articleBody);
+        articleBodyRepository.save(articleBody);
     }
 
     @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
-            articleContentRepository.deleteById(id);
+    public void deleteAll(Long[] ids) {
+        for (Long id : ids) {
+            articleBodyRepository.deleteById(id);
         }
     }
 
     @Override
     public void download(List<ArticleBodyDto> all, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (ArticleBodyDto articleContent : all) {
+        for (ArticleBodyDto articleBodyDto : all) {
             Map<String,Object> map = new LinkedHashMap<>();
-            map.put("文章id", articleContent.getArticleId());
-            map.put("文章内容", articleContent.getContent());
-            map.put("状态", articleContent.getEnabled());
-            map.put("创建者", articleContent.getCreateBy());
-            map.put("更新者", articleContent.getUpdateBy());
-            map.put("创建日期", articleContent.getCreateTime());
-            map.put("更新时间", articleContent.getUpdateTime());
+            map.put("文章id", articleBodyDto.getArticleId());
+            map.put("文章内容", articleBodyDto.getBody());
+            map.put("状态", articleBodyDto.getEnabled());
+            map.put("创建者", articleBodyDto.getCreateBy());
+            map.put("更新者", articleBodyDto.getUpdateBy());
+            map.put("创建日期", articleBodyDto.getCreateTime());
+            map.put("更新时间", articleBodyDto.getUpdateTime());
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);

@@ -45,7 +45,7 @@ public class Section extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "`id`")
     @ApiModelProperty(value = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "`name`",nullable = false)
     @NotBlank

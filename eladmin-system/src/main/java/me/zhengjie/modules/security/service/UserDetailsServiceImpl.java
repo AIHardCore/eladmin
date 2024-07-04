@@ -42,15 +42,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserCacheManager userCacheManager;
 
     @Override
-    public JwtUserDto loadUserByUsername(String username) {
-        JwtUserDto jwtUserDto = userCacheManager.getUserCache(username);
+    public JwtUserDto loadUserByUsername(String openId) {
+        JwtUserDto jwtUserDto = userCacheManager.getUserCache(openId);
         if(jwtUserDto == null){
             UserLoginDto user;
             try {
-                user = userService.getLoginData(username);
+                user = userService.getLoginData(openId);
             } catch (EntityNotFoundException e) {
                 // SpringSecurity会自动转换UsernameNotFoundException为BadCredentialsException
-                throw new UsernameNotFoundException(username, e);
+                throw new UsernameNotFoundException(openId, e);
             }
             if (user == null) {
                 throw new UsernameNotFoundException("");
@@ -64,7 +64,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                         roleService.mapToGrantedAuthorities(user)
                 );
                 // 添加缓存数据
-                userCacheManager.addUserCache(username, jwtUserDto);
+                userCacheManager.addUserCache(openId, jwtUserDto);
             }
         }
         return jwtUserDto;

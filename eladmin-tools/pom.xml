@@ -16,6 +16,7 @@
         <mail.version>1.4.7</mail.version>
         <qiniu.version>7.9.3</qiniu.version>
         <alipay.version>4.22.57.ALL</alipay.version>
+        <wx.version>0.2.12</wx.version>
     </properties>
 
     <dependencies>
@@ -46,5 +47,13 @@
             <artifactId>alipay-sdk-java</artifactId>
             <version>${alipay.version}</version>
         </dependency>
+
+        <!--微信支付依赖-->
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>${wx.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

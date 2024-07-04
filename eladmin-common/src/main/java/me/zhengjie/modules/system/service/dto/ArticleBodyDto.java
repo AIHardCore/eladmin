@@ -32,7 +32,7 @@ public class ArticleBodyDto implements Serializable {
     private Integer articleId;
 
     /** 文章内容 */
-    private String content;
+    private String body;
 
     /** 状态 */
     private Boolean enabled;

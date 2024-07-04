@@ -17,7 +17,7 @@ package me.zhengjie.modules.system.service.impl;
 
 import me.zhengjie.modules.system.service.SectionService;
 import me.zhengjie.modules.system.domain.Section;
-import me.zhengjie.modules.system.mapstruct.SectionMapper;
+import me.zhengjie.modules.system.service.mapstruct.SectionMapper;
 import me.zhengjie.modules.system.repository.SectionRepository;
 import me.zhengjie.modules.system.service.dto.SectionDto;
 import me.zhengjie.modules.system.service.dto.SectionQueryCriteria;
@@ -64,7 +64,7 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     @Transactional
-    public SectionDto findById(Integer id) {
+    public SectionDto findById(Long id) {
         Section section = sectionRepository.findById(id).orElseGet(Section::new);
         ValidationUtil.isNull(section.getId(),"Section","id",id);
         return sectionMapper.toDto(section);
@@ -86,8 +86,8 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
+    public void deleteAll(Long[] ids) {
+        for (Long id : ids) {
             sectionRepository.deleteById(id);
         }
     }

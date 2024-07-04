@@ -16,24 +16,25 @@
 package me.zhengjie.modules.system.service.dto;
 
 import lombok.Data;
-import me.zhengjie.base.BaseDTO;
+import me.zhengjie.modules.system.domain.Special;
 
+import java.sql.Timestamp;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Set;
 
 /**
 * @website https://eladmin.vip
 * @description /
 * @author hardcore
-* @date 2024-06-19
+* @date 2024-06-29
 **/
 @Data
-public class ArticleDto extends BaseDTO implements Serializable {
+public class ArticleDto implements Serializable {
 
     private Integer id;
 
-    /** 版块 */
-    private SectionDto section;
+    /** 专栏列表 */
+    private Set<SpecialSmallDto> specials;
 
     /** 标题 */
     private String title;
@@ -44,6 +45,9 @@ public class ArticleDto extends BaseDTO implements Serializable {
     /** 预览内容 */
     private String preview;
 
+    /** 内容 */
+    private String body = "";
+
     /** 状态 */
     private Boolean enabled;
 
@@ -53,17 +57,15 @@ public class ArticleDto extends BaseDTO implements Serializable {
     /** 阅读量 */
     private Integer reading;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ArticleDto that = (ArticleDto) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(title, that.title);
-    }
+    /** 创建人 */
+    private String createBy;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title);
-    }
+    /** 修改人 */
+    private String updateBy;
+
+    /** 创建时间 */
+    private Timestamp createTime;
+
+    /** 更新时间 */
+    private Timestamp updateTime;
 }

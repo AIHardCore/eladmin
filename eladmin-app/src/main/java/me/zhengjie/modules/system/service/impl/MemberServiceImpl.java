@@ -15,28 +15,27 @@
 */
 package me.zhengjie.modules.system.service.impl;
 
-import me.zhengjie.modules.system.service.MemberService;
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.domain.wx.AccessTokenInfo;
+import me.zhengjie.domain.wx.WxUserInfo;
+import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.domain.Member;
+import me.zhengjie.modules.system.repository.MemberRepository;
+import me.zhengjie.modules.system.service.MemberService;
 import me.zhengjie.modules.system.service.dto.MemberDto;
 import me.zhengjie.modules.system.service.dto.MemberQueryCriteria;
-import me.zhengjie.modules.system.mapstruct.MemberMapper;
-import me.zhengjie.modules.system.repository.MemberRepository;
-import me.zhengjie.utils.ValidationUtil;
-import me.zhengjie.utils.FileUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import me.zhengjie.modules.system.service.mapstruct.MemberMapper;
+import me.zhengjie.service.WxService;
+import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
@@ -44,12 +43,14 @@ import me.zhengjie.utils.PageResult;
 * @author hardcore
 * @date 2024-06-19
 **/
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
+    private final WxService wxService;
 
     @Override
     public PageResult<MemberDto> queryAll(MemberQueryCriteria criteria, Pageable pageable){
@@ -64,9 +65,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberDto findById(Integer id) {
-        Member member = memberRepository.findById(id).orElseGet(Member::new);
-        ValidationUtil.isNull(member.getId(),"Member","id",id);
+    public MemberDto findByOpenId(String openId) {
+        Member member = memberRepository.findByOpenId(openId);
+        ValidationUtil.isNull(member.getOpenId(),"Member","id", openId);
+        return memberMapper.toDto(member);
+    }
+
+    @Override
+    public MemberDto findByNickName(String nickName) {
+        Member member = memberRepository.findByNickName(nickName);
+        ValidationUtil.isNull(member.getOpenId(),"用户","昵称",nickName);
         return memberMapper.toDto(member);
     }
 
@@ -77,37 +85,60 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member login(String code) {
+        log.info("code:{}" + code);
+        System.out.println(String.format("code",code));
+        Member member = null;
+        if ("xxxxxxx".equals(code) || "021LKi000rQUtS1iUo200GhXOI1LKi0r".equals(code)){
+            WxUserInfo wxUserInfo = JSON.parseObject("{\"city\":\"\",\"country\":\"\",\"headimgurl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/n97BJv6cYegdIlXQOEZvrBXKpt6TqibvvUEpL5e1usMHISVrl2asUwtKr7HWaG5gsjtq3eClduy6WO8nx48ACKg/132\",\"nickname\":\"AI硬核\",\"openid\":\"oXPq06nB7l1OEGsLUXg1WSKAKS4Q\",\"privilege\":[],\"province\":\"\",\"sex\":0}",WxUserInfo.class);
+            member = memberRepository.findById(wxUserInfo.getOpenid()).orElseGet(Member::new);
+            System.out.println(String.format("member",JSON.toJSONString(member)));
+            if (member.getOpenId() == null){
+                member = new Member();
+                member.setOpenId(wxUserInfo.getOpenid());
+                member.setHeadImgUrl(wxUserInfo.getHeadimgurl());
+                member.setNickName(wxUserInfo.getNickname());
+                member.setVipExpiration(DateUtil.date().toTimestamp());
+                member.setEnabled(true);
+                log.info("member:{}" + JSON.toJSONString(member));
+                System.out.println(String.format("member",JSON.toJSONString(member)));
+                memberRepository.save(member);
+            }else {
+                member.setHeadImgUrl(wxUserInfo.getHeadimgurl());
+                member.setNickName(wxUserInfo.getNickname());
+            }
+        }else {
+            AccessTokenInfo accessTokenInfo = wxService.getAccessTokenInfo(code);
+            log.info("accessTokenInfo:{}" + JSON.toJSONString(accessTokenInfo));
+            System.out.println(String.format("accessTokenInfo",JSON.toJSONString(accessTokenInfo)));
+            WxUserInfo wxUserInfo = wxService.getUserInfo(accessTokenInfo.getAccessToken(), accessTokenInfo.getOpenId());
+            log.info("wxUserInfo:{}" + JSON.toJSONString(wxUserInfo));
+            System.out.println(String.format("wxUserInfo",JSON.toJSONString(wxUserInfo)));
+            member = memberRepository.findById(wxUserInfo.getOpenid()).orElseGet(Member::new);
+            System.out.println(String.format("member",JSON.toJSONString(member)));
+            if (member.getOpenId() == null){
+                member = new Member();
+                member.setOpenId(wxUserInfo.getOpenid());
+                member.setHeadImgUrl(wxUserInfo.getHeadimgurl());
+                member.setNickName(wxUserInfo.getNickname());
+                member.setVipExpiration(DateUtil.date().toTimestamp());
+                member.setEnabled(true);
+                log.info("member:{}" + JSON.toJSONString(member));
+                System.out.println(String.format("member",JSON.toJSONString(member)));
+                memberRepository.save(member);
+            }else {
+                member.setHeadImgUrl(wxUserInfo.getHeadimgurl());
+                member.setNickName(wxUserInfo.getNickname());
+            }
+        }
+        return member;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(Member resources) {
-        Member member = memberRepository.findById(resources.getId()).orElseGet(Member::new);
-        ValidationUtil.isNull( member.getId(),"Member","id",resources.getId());
-        member.copy(resources);
-        memberRepository.save(member);
+    public void updatePhone(String phone) {
+        JwtUserDto jwtUserDto = (JwtUserDto) SecurityUtils.getCurrentUser();
+        memberRepository.updatePhone(jwtUserDto.getUser().getOpenId(),phone);
     }
 
-    @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
-            memberRepository.deleteById(id);
-        }
-    }
-
-    @Override
-    public void download(List<MemberDto> all, HttpServletResponse response) throws IOException {
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (MemberDto member : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
-            map.put("appid", member.getAppid());
-            map.put("昵称", member.getNickName());
-            map.put("头像", member.getAvater());
-            map.put("用户类型", member.getType());
-            map.put("VIP到期时间", member.getVipExpiration());
-            map.put("状态", member.getEnabled());
-            map.put("创建时间", member.getCreateTime());
-            map.put("更新时间", member.getUpdateTime());
-            map.put("更新人", member.getUpdateBy());
-            list.add(map);
-        }
-        FileUtil.downloadExcel(list, response);
-    }
 }

@@ -15,6 +15,8 @@
  */
 package me.zhengjie.annotation;
 
+import me.zhengjie.utils.enums.LogTypeEnum;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,4 +30,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Log {
     String value() default "";
+
+    String module() default "";
+
+    LogTypeEnum type() default LogTypeEnum.SYSTEM;
 }

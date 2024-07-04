@@ -56,7 +56,6 @@ public class ArticleBodyController {
     }
 
     @GetMapping
-    @Log("查询 文章正文")
     @ApiOperation("查询 文章正文")
     @PreAuthorize("@el.check('articleBody:list')")
     public ResponseEntity<PageResult<ArticleBodyDto>> queryArticleContent(ArticleContentQueryCriteria criteria, Pageable pageable){
@@ -64,7 +63,6 @@ public class ArticleBodyController {
     }
 
     @PostMapping
-    @Log("新增 文章正文")
     @ApiOperation("新增 文章正文")
     @PreAuthorize("@el.check('articleBody:add')")
     public ResponseEntity<Object> createArticleContent(@Validated @RequestBody ArticleBody resources){
@@ -73,10 +71,9 @@ public class ArticleBodyController {
     }
 
     @GetMapping("/{id}")
-    @Log("文章正文详情")
     @ApiOperation("文章正文详情")
     @PreAuthorize("@el.check('articleBody:detail')")
-    public ResponseEntity<ArticleBodyDto> detail(@NotNull @PathVariable Integer id){
+    public ResponseEntity<ArticleBodyDto> detail(@NotNull @PathVariable Long id){
         return new ResponseEntity<>(articleBodyService.findById(id),HttpStatus.OK);
     }
 
@@ -93,7 +90,7 @@ public class ArticleBodyController {
     @Log("删除 文章正文")
     @ApiOperation("删除 文章正文")
     @PreAuthorize("@el.check('articleBody:del')")
-    public ResponseEntity<Object> deleteArticleContent(@RequestBody Integer[] ids) {
+    public ResponseEntity<Object> deleteArticleContent(@RequestBody Long[] ids) {
         articleBodyService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

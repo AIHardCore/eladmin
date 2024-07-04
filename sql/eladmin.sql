@@ -238,9 +238,9 @@ CREATE TABLE `sys_dict` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `sys_dict` VALUES (1, 'sys_config', '系统默认配置', NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict` VALUES (3, 'user_status', '用户状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict` VALUES (4, 'dept_status', '部门状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict` VALUES (5, 'job_status', '岗位状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict` VALUES (2, 'user_status', '用户状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict` VALUES (3, 'dept_status', '部门状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict` VALUES (4, 'job_status', '岗位状态', NULL, NULL, '2019-10-27 20:31:36', NULL);
 COMMIT;
 
 -- ----------------------------
@@ -266,12 +266,12 @@ CREATE TABLE `sys_dict_detail` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `sys_dict_detail` VALUES (1, 1, 'default_pwd', '123456', 1, NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict_detail` VALUES (1, 3, '激活', 'true', 1, NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict_detail` VALUES (2, 3, '禁用', 'false', 2, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_dict_detail` VALUES (3, 4, '启用', 'true', 1, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_dict_detail` VALUES (4, 4, '停用', 'false', 2, NULL, NULL, '2019-10-27 20:31:36', NULL);
-INSERT INTO `sys_dict_detail` VALUES (5, 5, '启用', 'true', 1, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_dict_detail` VALUES (6, 5, '停用', 'false', 2, NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict_detail` VALUES (2, 2, '激活', 'true', 1, NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict_detail` VALUES (3, 2, '禁用', 'false', 2, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_dict_detail` VALUES (4, 3, '启用', 'true', 1, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_dict_detail` VALUES (5, 3, '停用', 'false', 2, NULL, NULL, '2019-10-27 20:31:36', NULL);
+INSERT INTO `sys_dict_detail` VALUES (6, 4, '启用', 'true', 1, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_dict_detail` VALUES (7, 4, '停用', 'false', 2, NULL, NULL, '2019-10-27 20:31:36', NULL);
 COMMIT;
 
 -- ----------------------------

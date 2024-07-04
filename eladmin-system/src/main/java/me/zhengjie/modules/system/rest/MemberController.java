@@ -54,7 +54,6 @@ public class MemberController {
     }
 
     @GetMapping
-    @Log("查询APP用户")
     @ApiOperation("查询APP用户")
     @PreAuthorize("@el.check('member:list')")
     public ResponseEntity<PageResult<MemberDto>> queryMember(MemberQueryCriteria criteria, Pageable pageable){
@@ -83,7 +82,7 @@ public class MemberController {
     @Log("删除APP用户")
     @ApiOperation("删除APP用户")
     @PreAuthorize("@el.check('member:del')")
-    public ResponseEntity<Object> deleteMember(@RequestBody Integer[] ids) {
+    public ResponseEntity<Object> deleteMember(@RequestBody String[] ids) {
         memberService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

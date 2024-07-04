@@ -15,6 +15,8 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
+import cn.hutool.core.date.DateUtil;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import me.zhengjie.base.BaseDTO;
 
@@ -30,16 +32,17 @@ import java.io.Serializable;
 @Data
 public class MemberDto extends BaseDTO implements Serializable {
 
-    private Integer id;
-
-    /** appid */
-    private String appid;
+    /** openid */
+    private String openId;
 
     /** 昵称 */
     private String nickName;
 
     /** 头像 */
-    private String avater;
+    private String headImgUrl;
+
+    /** 手机号 */
+    private String phone;
 
     /** 用户类型 */
     private Boolean type;
@@ -48,16 +51,24 @@ public class MemberDto extends BaseDTO implements Serializable {
     private Timestamp vipExpiration;
 
     /** 状态 */
-    private String enabled;
+    private Boolean enabled;
 
-    /** 创建时间 */
-    private Timestamp createTime;
+    public Boolean getType() {
+        if (vipExpiration == null) return null;
+        if (vipExpiration.compareTo(DateUtil.date()) >= 0){
+            return true;
+        }else {
+            return false;
+        }
+    }
 
-    /** 更新时间
-更新时间
- 更新时间 */
-    private Timestamp updateTime;
-
-    /** 更新人 */
-    private String updateBy;
+    public void setVipExpiration(Timestamp vipExpiration) {
+        if (vipExpiration == null) return;
+        this.vipExpiration = vipExpiration;
+        if (vipExpiration.compareTo(DateUtil.date()) >= 0){
+            type = true;
+        }else {
+            type = false;
+        }
+    }
 }

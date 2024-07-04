@@ -16,13 +16,20 @@
 package me.zhengjie.modules.system.repository;
 
 import me.zhengjie.modules.system.domain.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
 * @website https://eladmin.vip
 * @author hardcore
-* @date 2024-06-19
+* @date 2024-06-29
 **/
-public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+
+    @EntityGraph(value = "Article.withSpecials", type = EntityGraph.EntityGraphType.LOAD)
+    Page<Article> findAll(Specification<Article> specification, Pageable pageable);
 }

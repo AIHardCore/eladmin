@@ -89,6 +89,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         Query queryCount = em.createNativeQuery(countSql);
         queryCount.setParameter("table", StringUtils.isNotBlank(name) ? ("%" + name + "%") : "%%");
         BigInteger totalElements = (BigInteger) queryCount.getSingleResult();
+
         return PageUtil.toPage(tableInfos, totalElements.longValue());
     }
 

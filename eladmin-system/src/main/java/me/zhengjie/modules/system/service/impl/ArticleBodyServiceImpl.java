@@ -23,7 +23,7 @@ import me.zhengjie.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.repository.ArticleBodyRepository;
 import me.zhengjie.modules.system.service.ArticleBodyService;
-import me.zhengjie.modules.system.service.mapstruct.ArticleContentMapper;
+import me.zhengjie.modules.system.service.mapstruct.ArticleBodyMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -49,25 +49,25 @@ import me.zhengjie.utils.PageResult;
 public class ArticleBodyServiceImpl implements ArticleBodyService {
 
     private final ArticleBodyRepository articleBodyRepository;
-    private final ArticleContentMapper articleContentMapper;
+    private final ArticleBodyMapper articleBodyMapper;
 
     @Override
     public PageResult<ArticleBodyDto> queryAll(ArticleContentQueryCriteria criteria, Pageable pageable){
         Page<ArticleBody> page = articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
-        return PageUtil.toPage(page.map(articleContentMapper::toDto));
+        return PageUtil.toPage(page.map(articleBodyMapper::toDto));
     }
 
     @Override
     public List<ArticleBodyDto> queryAll(ArticleContentQueryCriteria criteria){
-        return articleContentMapper.toDto(articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        return articleBodyMapper.toDto(articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
     }
 
     @Override
     @Transactional
-    public ArticleBodyDto findById(Integer id) {
+    public ArticleBodyDto findById(Long id) {
         ArticleBody articleBody = articleBodyRepository.findById(id).orElseGet(me.zhengjie.modules.system.domain.ArticleBody::new);
         ValidationUtil.isNull(articleBody.getArticleId(),"ArticleBody","id",id);
-        return articleContentMapper.toDto(articleBody);
+        return articleBodyMapper.toDto(articleBody);
     }
 
     @Override
@@ -86,8 +86,8 @@ public class ArticleBodyServiceImpl implements ArticleBodyService {
     }
 
     @Override
-    public void deleteAll(Integer[] ids) {
-        for (Integer id : ids) {
+    public void deleteAll(Long[] ids) {
+        for (Long id : ids) {
             articleBodyRepository.deleteById(id);
         }
     }
@@ -95,15 +95,15 @@ public class ArticleBodyServiceImpl implements ArticleBodyService {
     @Override
     public void download(List<ArticleBodyDto> all, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (ArticleBodyDto articleContent : all) {
+        for (ArticleBodyDto articleBodyDto : all) {
             Map<String,Object> map = new LinkedHashMap<>();
-            map.put("文章id", articleContent.getArticleId());
-            map.put("文章内容", articleContent.getContent());
-            map.put("状态", articleContent.getEnabled());
-            map.put("创建者", articleContent.getCreateBy());
-            map.put("更新者", articleContent.getUpdateBy());
-            map.put("创建日期", articleContent.getCreateTime());
-            map.put("更新时间", articleContent.getUpdateTime());
+            map.put("文章id", articleBodyDto.getArticleId());
+            map.put("文章内容", articleBodyDto.getBody());
+            map.put("状态", articleBodyDto.getEnabled());
+            map.put("创建者", articleBodyDto.getCreateBy());
+            map.put("更新者", articleBodyDto.getUpdateBy());
+            map.put("创建日期", articleBodyDto.getCreateTime());
+            map.put("更新时间", articleBodyDto.getUpdateTime());
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);

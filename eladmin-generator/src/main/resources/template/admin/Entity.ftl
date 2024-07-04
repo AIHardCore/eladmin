@@ -35,6 +35,7 @@ import java.sql.Timestamp;
 import java.math.BigDecimal;
 </#if>
 import java.io.Serializable;
+import me.zhengjie.base.BaseEntity;
 
 /**
 * @website https://eladmin.vip
@@ -45,7 +46,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name="${tableName}")
-public class ${className} implements Serializable {
+public class ${className} extends BaseEntity implements Serializable {
 <#if columns??>
     <#list columns as column>
 

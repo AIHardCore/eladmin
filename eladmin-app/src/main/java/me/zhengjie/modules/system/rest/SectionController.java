@@ -15,22 +15,23 @@
 */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.system.service.SectionService;
 import me.zhengjie.modules.system.domain.Section;
+import me.zhengjie.modules.system.service.SectionService;
 import me.zhengjie.modules.system.service.dto.SectionDto;
 import me.zhengjie.modules.system.service.dto.SectionQueryCriteria;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
-import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
-import me.zhengjie.utils.PageResult;
+import java.io.IOException;
 
 /**
 * @website https://eladmin.vip
@@ -40,7 +41,7 @@ import me.zhengjie.utils.PageResult;
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "版块管理")
-@RequestMapping("/api/section")
+@RequestMapping("/app/section")
 public class SectionController {
 
     private final SectionService sectionService;
@@ -48,7 +49,6 @@ public class SectionController {
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('section:list')")
     public void exportSection(HttpServletResponse response, SectionQueryCriteria criteria) throws IOException {
         sectionService.download(sectionService.queryAll(criteria), response);
     }
@@ -56,16 +56,14 @@ public class SectionController {
     @GetMapping
     @Log("查询版块")
     @ApiOperation("查询版块")
-    @PreAuthorize("@el.check('section:list')")
-    public ResponseEntity<PageResult<SectionDto>> querySection(SectionQueryCriteria criteria, Pageable pageable){
+        public ResponseEntity<PageResult<SectionDto>> querySection(SectionQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(sectionService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
     @PostMapping
     @Log("新增版块")
     @ApiOperation("新增版块")
-    @PreAuthorize("@el.check('section:add')")
-    public ResponseEntity<Object> createSection(@Validated @RequestBody Section resources){
+        public ResponseEntity<Object> createSection(@Validated @RequestBody Section resources){
         sectionService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -73,8 +71,7 @@ public class SectionController {
     @PutMapping
     @Log("修改版块")
     @ApiOperation("修改版块")
-    @PreAuthorize("@el.check('section:edit')")
-    public ResponseEntity<Object> updateSection(@Validated @RequestBody Section resources){
+        public ResponseEntity<Object> updateSection(@Validated @RequestBody Section resources){
         sectionService.update(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -82,8 +79,7 @@ public class SectionController {
     @DeleteMapping
     @Log("删除版块")
     @ApiOperation("删除版块")
-    @PreAuthorize("@el.check('section:del')")
-    public ResponseEntity<Object> deleteSection(@RequestBody Integer[] ids) {
+        public ResponseEntity<Object> deleteSection(@RequestBody Long[] ids) {
         sectionService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

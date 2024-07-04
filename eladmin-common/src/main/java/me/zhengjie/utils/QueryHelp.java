@@ -70,6 +70,15 @@ public class QueryHelp {
                     if (ObjectUtil.isNull(val) || "".equals(val)) {
                         continue;
                     }
+                    if (val instanceof Set && ((Set)val).size() == 0){
+                        continue;
+                    }
+                    if (val instanceof List && ((List)val).size() == 0){
+                        continue;
+                    }
+                    if (val.getClass().isArray() && Arrays.asList(val).size() == 0){
+                        continue;
+                    }
                     Join join = null;
                     // 模糊多字段
                     if (ObjectUtil.isNotEmpty(blurry)) {
@@ -82,7 +91,7 @@ public class QueryHelp {
                         list.add(cb.or(orPredicate.toArray(p)));
                         continue;
                     }
-                    if (ObjectUtil.isNotEmpty(joinName)) {
+                    if (ObjectUtil.isNotEmpty(joinName) && ObjectUtil.isNotNull(val) && !"".equals(val)) {
                         join = joinKey.get(joinName);
                         if(join == null){
                             String[] joinNames = joinName.split(">");

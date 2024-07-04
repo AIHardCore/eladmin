@@ -44,7 +44,7 @@ public class PageUtil extends cn.hutool.core.util.PageUtil {
      * Page 数据处理，预防redis反序列化报错
      */
     public static <T> PageResult<T> toPage(Page<T> page) {
-        return new PageResult<>(page.getContent(), page.getTotalElements());
+        return new PageResult<>(page.getContent(), page.getTotalElements(), page.getTotalPages());
     }
 
     /**
@@ -55,9 +55,16 @@ public class PageUtil extends cn.hutool.core.util.PageUtil {
     }
 
     /**
+     * 自定义分页
+     */
+    public static <T> PageResult<T> toPage(List<T> list, long totalElements, long totalPage) {
+        return new PageResult<>(list, totalElements, totalPage);
+    }
+
+    /**
      * 返回空数据
      */
     public static <T> PageResult<T> noData () {
-        return new PageResult<>(null, 0);
+        return new PageResult<>(null, 0, 0);
     }
 }

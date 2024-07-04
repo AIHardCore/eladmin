@@ -16,20 +16,25 @@
 package me.zhengjie.aspect;
 
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.annotation.Log;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.service.SysLogService;
 import me.zhengjie.utils.RequestHolder;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ThrowableUtil;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 
 /**
  * @author Zheng Jie
@@ -66,7 +71,19 @@ public class LogAspect {
         Object result;
         currentTime.set(System.currentTimeMillis());
         result = joinPoint.proceed();
-        SysLog sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get());
+        SysLog sysLog = null;
+
+        Signature signature = joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature)signature;
+        Method targetMethod = methodSignature.getMethod();
+        Log log = targetMethod.getAnnotation(Log.class);
+
+        if (StringUtils.isBlank(log.module())){
+            sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get(), log.type());
+        }else {
+            sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get(), log.type(), log.module());
+        }
+
         currentTime.remove();
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
         sysLogService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request),joinPoint, sysLog);
@@ -81,7 +98,19 @@ public class LogAspect {
      */
     @AfterThrowing(pointcut = "logPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        SysLog sysLog = new SysLog("ERROR",System.currentTimeMillis() - currentTime.get());
+        Signature signature = joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature)signature;
+        Method targetMethod = methodSignature.getMethod();
+        Log log = targetMethod.getAnnotation(Log.class);
+
+        SysLog sysLog = null;
+
+        if (StringUtils.isBlank(log.module())){
+            sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get(), log.type());
+        }else {
+            sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get(), log.type(), log.module());
+        }
+
         currentTime.remove();
         sysLog.setExceptionDetail(ThrowableUtil.getStackTrace(e).getBytes());
         HttpServletRequest request = RequestHolder.getHttpServletRequest();

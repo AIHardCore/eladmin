@@ -32,13 +32,23 @@ public class BannerQueryCriteria{
     @Query
     private Boolean enabled;
 
+    /** 精确 */
+    @Query
+    private Long special;
+
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE)
     private String describe;
+
+    /** BETWEEN */
+    @Query(type = Query.Type.LESS_THAN)
+    private Timestamp beginTime;
+
     /** BETWEEN */
     @Query(type = Query.Type.BETWEEN)
-    private List<Timestamp> beginTime;
+    private List<Timestamp> betweenTime;
+
     /** BETWEEN */
-    @Query(type = Query.Type.BETWEEN)
-    private List<Timestamp> endTime;
+    @Query(type = Query.Type.GREATER_THAN)
+    private Timestamp endTime;
 }

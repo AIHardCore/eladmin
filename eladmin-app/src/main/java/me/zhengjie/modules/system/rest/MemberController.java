@@ -15,67 +15,47 @@
 */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
+import me.zhengjie.modules.security.service.dto.JwtUserDto;
+import me.zhengjie.modules.system.domain.Member;
 import me.zhengjie.modules.system.service.MemberService;
 import me.zhengjie.modules.system.service.dto.MemberDto;
-import me.zhengjie.modules.system.service.dto.MemberQueryCriteria;
-import me.zhengjie.modules.system.domain.Member;
-import org.springframework.data.domain.Pageable;
-import lombok.RequiredArgsConstructor;
+import me.zhengjie.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
 * @author hardcore
-* @date 2024-06-19
+* @date 2024-07-03
 **/
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "APP用户管理")
-@RequestMapping("/api/member")
+@Api(tags = "用户管理")
+@RequestMapping("/app/member")
 public class MemberController {
 
     private final MemberService memberService;
 
-    @Log("导出数据")
-    @ApiOperation("导出数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('member:list')")
-    public void exportMember(HttpServletResponse response, MemberQueryCriteria criteria) throws IOException {
-        memberService.download(memberService.queryAll(criteria), response);
+    @PutMapping()
+    @Log("修改手机号")
+    @ApiOperation("查询专栏")
+        public ResponseEntity<Object> updatePhone(@Validated @RequestBody Member member){
+        memberService.updatePhone(member.getPhone());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping
-    @Log("查询APP用户")
-    @ApiOperation("查询APP用户")
-    @PreAuthorize("@el.check('member:list')")
-    public ResponseEntity<PageResult<MemberDto>> queryMember(MemberQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(memberService.queryAll(criteria,pageable),HttpStatus.OK);
-    }
-
-    @PostMapping
-    @Log("新增APP用户")
-    @ApiOperation("新增APP用户")
-    @PreAuthorize("@el.check('member:add')")
-    public ResponseEntity<Object> createMember(@Validated @RequestBody Member resources){
-        memberService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PutMapping
-    @Log("修改APP用户")
-    @ApiOperation("修改APP用户")
-    @PreAuthorize("@el.check('member:edit')")
-    public ResponseEntity<Object> updateMember(@Validated @RequestBody Member resources){
-        memberService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @ApiOperation("获取用户信息")
+    @GetMapping(value = "/info")
+    public ResponseEntity<MemberDto> getUserInfo() {
+        JwtUserDto jwtUserDto = (JwtUserDto) SecurityUtils.getCurrentUser();
+        MemberDto memberDto = memberService.findByOpenId(jwtUserDto.getUser().getOpenId());
+        memberDto.setOpenId(null);
+        return ResponseEntity.ok(memberDto);
     }
 }

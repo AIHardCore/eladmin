@@ -24,5 +24,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @author hardcore
 * @date 2024-06-19
 **/
-public interface MemberRepository extends JpaRepository<Member, Integer>, JpaSpecificationExecutor<Member> {
+public interface MemberRepository extends JpaRepository<Member, String>, JpaSpecificationExecutor<Member> {
 }

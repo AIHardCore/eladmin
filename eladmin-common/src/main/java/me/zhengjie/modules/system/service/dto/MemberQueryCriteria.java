@@ -30,11 +30,19 @@ public class MemberQueryCriteria{
 
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE)
-    private String appid;
+    private String openId;
 
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE)
     private String nickName;
+
+    /** 模糊 */
+    @Query(type = Query.Type.INNER_LIKE)
+    private String phone;
+
+    /** 模糊 */
+    @Query(type = Query.Type.EQUAL)
+    private Boolean type;
 
     /** 精确 */
     @Query
@@ -42,7 +50,16 @@ public class MemberQueryCriteria{
     /** BETWEEN */
     @Query(type = Query.Type.BETWEEN)
     private List<Timestamp> vipExpiration;
+
     /** BETWEEN */
     @Query(type = Query.Type.BETWEEN)
     private List<Timestamp> createTime;
+
+    /** 创建者 */
+    @Query(type = Query.Type.EQUAL)
+    private String createBy;
+
+    /** 排除创建者 */
+    @Query(type = Query.Type.NOT_EQUAL,propName = "createBy")
+    private String notCreateBy;
 }

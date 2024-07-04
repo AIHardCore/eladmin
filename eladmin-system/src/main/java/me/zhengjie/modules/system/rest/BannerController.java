@@ -18,6 +18,7 @@ package me.zhengjie.modules.system.rest;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.system.domain.Banner;
 import me.zhengjie.modules.system.service.BannerService;
+import me.zhengjie.modules.system.service.dto.BannerDto;
 import me.zhengjie.modules.system.service.dto.BannerQueryCriteria;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,6 @@ import io.swagger.annotations.*;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import me.zhengjie.utils.PageResult;
-import me.zhengjie.modules.system.service.dto.BannerDto;
 
 /**
 * @website https://eladmin.vip
@@ -54,7 +54,6 @@ public class BannerController {
     }
 
     @GetMapping
-    @Log("查询轮播图")
     @ApiOperation("查询轮播图")
     @PreAuthorize("@el.check('banner:list')")
     public ResponseEntity<PageResult<BannerDto>> queryBanner(BannerQueryCriteria criteria, Pageable pageable){
@@ -62,7 +61,6 @@ public class BannerController {
     }
 
     @PostMapping
-    @Log("新增轮播图")
     @ApiOperation("新增轮播图")
     @PreAuthorize("@el.check('banner:add')")
     public ResponseEntity<Object> createBanner(@Validated @RequestBody Banner resources){
@@ -83,7 +81,7 @@ public class BannerController {
     @Log("删除轮播图")
     @ApiOperation("删除轮播图")
     @PreAuthorize("@el.check('banner:del')")
-    public ResponseEntity<Object> deleteBanner(@RequestBody Integer[] ids) {
+    public ResponseEntity<Object> deleteBanner(@RequestBody Long[] ids) {
         bannerService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

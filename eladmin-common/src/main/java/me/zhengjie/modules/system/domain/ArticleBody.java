@@ -43,16 +43,16 @@ public class ArticleBody extends BaseEntity implements Serializable {
     @Column(name = "`article_id`",nullable = false)
     @NotNull
     @ApiModelProperty(value = "文章id")
-    private Integer articleId;
+    private Long articleId;
 
     @OneToOne
     @JoinColumn(name = "article_id")
     @ApiModelProperty(value = "文章")
     private Article article;
 
-    @Column(name = "`content`")
+    @Column(name = "`body`")
     @ApiModelProperty(value = "文章内容")
-    private String content;
+    private String body;
 
     public void copy(ArticleBody source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));

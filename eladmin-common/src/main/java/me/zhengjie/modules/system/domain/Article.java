@@ -1,21 +1,22 @@
 /*
-*  Copyright 2019-2020 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+ *  Copyright 2019-2020 Zheng Jie
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package me.zhengjie.modules.system.domain;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import cn.hutool.core.bean.copier.CopyOptions;
 import javax.persistence.*;
@@ -29,16 +30,29 @@ import me.zhengjie.base.BaseEntity;
 import org.hibernate.annotations.*;
 import java.sql.Timestamp;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
-* @website https://eladmin.vip
-* @description /
-* @author hardcore
-* @date 2024-06-19
-**/
+ * @website https://eladmin.vip
+ * @description /
+ * @author hardcore
+ * @date 2024-06-29
+ **/
 @Entity
 @Getter
 @Setter
+@NamedEntityGraph(
+        name = "Article.withSpecials",
+        attributeNodes = {
+                @NamedAttributeNode("specials")
+        },
+        subgraphs = {@NamedSubgraph(
+                name = "special-article",
+                attributeNodes = {
+                        @NamedAttributeNode(value = "Special.withArticles")
+                }
+        )}
+)
 @Table(name="app_article")
 public class Article extends BaseEntity implements Serializable {
 
@@ -46,12 +60,14 @@ public class Article extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "`id`")
     @ApiModelProperty(value = "id")
-    private Integer id;
+    private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "section_id")
-    @ApiModelProperty(value = "版块")
-    private Section section;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @ApiModelProperty(value = "文章专栏")
+    @JoinTable(name = "app_articles_specials",
+            joinColumns = {@JoinColumn(name = "article_id",referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "special_id",referencedColumnName = "id")})
+    private Set<Special> specials;
 
     @Column(name = "`title`",nullable = false)
     @NotBlank
@@ -69,8 +85,13 @@ public class Article extends BaseEntity implements Serializable {
     private String preview;
 
     @Transient
-    @ApiModelProperty(value = "文章正文")
-    private String content;
+    @ApiModelProperty(value = "内容")
+    private String body = "";
+
+    @Version
+    @Column(name = "`version`")
+    @ApiModelProperty(value = "乐观锁")
+    private int version;
 
     @Column(name = "`enabled`",nullable = false)
     @NotNull

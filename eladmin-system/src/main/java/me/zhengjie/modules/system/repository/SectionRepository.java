@@ -24,5 +24,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @author hardcore
 * @date 2024-06-19
 **/
-public interface SectionRepository extends JpaRepository<Section, Integer>, JpaSpecificationExecutor<Section> {
+public interface SectionRepository extends JpaRepository<Section, Long>, JpaSpecificationExecutor<Section> {
 }

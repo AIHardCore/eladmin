@@ -18,18 +18,18 @@ package me.zhengjie.modules.system.service;
 import me.zhengjie.modules.system.domain.Article;
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
-import me.zhengjie.utils.PageResult;
+import java.io.IOException;
+import java.util.List;
 
 /**
 * @website https://eladmin.vip
 * @description 服务接口
 * @author hardcore
-* @date 2024-06-19
+* @date 2024-06-29
 **/
 public interface ArticleService {
 
@@ -53,7 +53,7 @@ public interface ArticleService {
      * @param id ID
      * @return ArticleDto
      */
-    ArticleDto findById(Integer id);
+    ArticleDto findById(Long id);
 
     /**
     * 创建
@@ -68,10 +68,16 @@ public interface ArticleService {
     void update(Article resources);
 
     /**
+     * 启用/禁用
+     * @param resources /
+     */
+    void enabled(Article resources);
+
+    /**
     * 多选删除
     * @param ids /
     */
-    void deleteAll(Integer[] ids);
+    void deleteAll(Long[] ids);
 
     /**
     * 导出数据

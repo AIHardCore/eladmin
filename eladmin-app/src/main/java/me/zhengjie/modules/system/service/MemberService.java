@@ -50,10 +50,17 @@ public interface MemberService {
 
     /**
      * 根据ID查询
-     * @param id ID
+     * @param openId ID
      * @return MemberDto
      */
-    MemberDto findById(Integer id);
+    MemberDto findByOpenId(String openId);
+
+    /**
+     * 根据ID查询
+     * @param nickName
+     * @return MemberDto
+     */
+    MemberDto findByNickName(String nickName);
 
     /**
     * 创建
@@ -62,22 +69,14 @@ public interface MemberService {
     void create(Member resources);
 
     /**
-    * 编辑
-    * @param resources /
-    */
-    void update(Member resources);
+     * 微信授权
+     * @param code
+     */
+    Member login(String code);
 
     /**
-    * 多选删除
-    * @param ids /
-    */
-    void deleteAll(Integer[] ids);
-
-    /**
-    * 导出数据
-    * @param all 待导出的数据
-    * @param response /
-    * @throws IOException /
-    */
-    void download(List<MemberDto> all, HttpServletResponse response) throws IOException;
+     * 修改手机号
+     * @param phone
+     */
+    void updatePhone(String phone);
 }

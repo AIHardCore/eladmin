@@ -26,17 +26,21 @@ import me.zhengjie.annotation.Query;
 /**
 * @website https://eladmin.vip
 * @author hardcore
-* @date 2024-06-19
+* @date 2024-06-29
 **/
 @Data
 public class ArticleQueryCriteria{
 
-    @Query(propName = "id", type = Query.Type.IN, joinName = "section")
-    private Set<Long> sectionIds = new HashSet<>();
+    @Query(propName = "id", type = Query.Type.IN, joinName = "specials")
+    private Set<Long> specials = new HashSet<>();
 
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE)
     private String title;
+
+    /** 模糊 */
+    @Query(type = Query.Type.INNER_LIKE)
+    private String content;
 
     /** 精确 */
     @Query
