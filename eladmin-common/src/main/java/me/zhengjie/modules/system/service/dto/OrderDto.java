@@ -15,11 +15,12 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import me.zhengjie.base.BaseDTO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 /**
 * @website https://eladmin.vip
@@ -27,8 +28,9 @@ import java.sql.Timestamp;
 * @author hardcore
 * @date 2024-07-06
 **/
-@Data
-public class OrderDto implements Serializable {
+@Getter
+@Setter
+public class OrderDto extends BaseDTO implements Serializable {
 
     private Long id;
 
@@ -49,16 +51,4 @@ public class OrderDto implements Serializable {
 
     /** 消息或异常 */
     private String msg;
-
-    /** 创建者 */
-    private String createBy;
-
-    /** 更新者 */
-    private String updateBy;
-
-    /** 创建日期 */
-    private Timestamp createTime;
-
-    /** 更新时间 */
-    private Timestamp updateTime;
 }
