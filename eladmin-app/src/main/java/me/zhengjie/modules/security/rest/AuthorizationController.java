@@ -30,14 +30,11 @@ import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.domain.Member;
 import me.zhengjie.modules.system.service.MemberService;
-import me.zhengjie.modules.system.service.dto.MemberDto;
-import me.zhengjie.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,12 +66,12 @@ public class AuthorizationController {
     @Qualifier("myAuthenticationManager")
     AuthenticationManager authenticationManager;
 
-    @Log("用户登录")
+    @Log("APP用户登录")
     @ApiOperation("登录授权")
     @AnonymousPostMapping(value = "/login")
     public ResponseEntity<Object> login(@Validated @RequestBody AuthUserDto authUser, HttpServletRequest request) throws Exception {
 
-        Member member = memberService.login(authUser.getCode());
+        Member member = memberService.login(authUser.getCode(), request);
 
         //选用不同的token，会通过循环找到token对应的provider，利用provider进行验证
         WXAuthenticationToken wxAuthenticationToken = new WXAuthenticationToken(member.getOpenId());

@@ -13,29 +13,19 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 */
-package me.zhengjie.modules.system.service.dto;
+package me.zhengjie.modules.system.repository;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-import me.zhengjie.modules.system.domain.CommentLike;
+import me.zhengjie.modules.system.domain.ArticleReadingLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 /**
 * @website https://eladmin.vip
-* @author hardcore
-* @date 2024-07-17
+* @author hardcoer
+* @date 2024-07-20
 **/
-@Data
-public class CommentLikeQueryCriteria{
-
-    /** 精确 */
-    @Query
-    private CommentLike.CompositeKey key;
-
-    /** 精确 */
-    @Query
-    private String to;
-
-    /** 精确 */
-    @Query
-    private String from;
+public interface ArticleReadingLogRepository extends JpaRepository<ArticleReadingLog, Long>, JpaSpecificationExecutor<ArticleReadingLog> {
+    @Query(value = "select count(id) from app_article_reading_log where type = ?1", nativeQuery = true)
+    long countByType(boolean type);
 }

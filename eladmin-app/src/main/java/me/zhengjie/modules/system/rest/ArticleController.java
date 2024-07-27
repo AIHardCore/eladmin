@@ -23,6 +23,7 @@ import me.zhengjie.modules.system.service.ArticleService;
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @website https://eladmin.vip
@@ -45,16 +48,16 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    @Log(value = "查询文章",module = "文章")
+    @Log(type = LogTypeEnum.APP,module = "文章")
     @ApiOperation("查询文章")
     public ResponseEntity<PageResult<ArticleDto>> queryArticle(ArticleQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(articleService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
-    @Log("文章详情")
+    @Log(type = LogTypeEnum.APP,module = "文章")
     @ApiOperation("文章详情")
-    public ResponseEntity<ArticleDto> detail(@PathVariable Long id){
-        return new ResponseEntity<>(articleService.findById(id),HttpStatus.OK);
+    public ResponseEntity<ArticleDto> detail(@PathVariable Long id, HttpServletRequest request){
+        return new ResponseEntity<>(articleService.findById(id,request),HttpStatus.OK);
     }
 }

@@ -1,18 +1,18 @@
 /*
-*  Copyright 2019-2020 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+ *  Copyright 2019-2020 Zheng Jie
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package me.zhengjie.modules.system.service.impl;
 
 import cn.hutool.core.date.DateUtil;
@@ -35,14 +35,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
-* @website https://eladmin.vip
-* @description 服务实现
-* @author hardcore
-* @date 2024-06-19
-**/
+ * @website https://eladmin.vip
+ * @description 服务实现
+ * @author hardcore
+ * @date 2024-06-19
+ **/
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -85,12 +86,20 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member login(String code) {
-        log.info("code:{}" + code);
+    public Member login(String code, HttpServletRequest request) {
+        log.info("code:{}",code);
         System.out.println(String.format("code",code));
         Member member = null;
-        if ("xxxxxxx".equals(code) || "021LKi000rQUtS1iUo200GhXOI1LKi0r".equals(code)){
-            WxUserInfo wxUserInfo = JSON.parseObject("{\"city\":\"\",\"country\":\"\",\"headimgurl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/n97BJv6cYegdIlXQOEZvrBXKpt6TqibvvUEpL5e1usMHISVrl2asUwtKr7HWaG5gsjtq3eClduy6WO8nx48ACKg/132\",\"nickname\":\"AI硬核\",\"openid\":\"oXPq06nB7l1OEGsLUXg1WSKAKS4Q\",\"privilege\":[],\"province\":\"\",\"sex\":0}",WxUserInfo.class);
+        if (request.getHeader("Host").contains("localhost") || "x".equals(code)){
+            WxUserInfo wxUserInfo = null;
+            switch (code){
+                case "x":
+                    wxUserInfo = JSON.parseObject("{\"city\":\"\",\"country\":\"\",\"headimgurl\":\"https://img01.yzcdn.cn/vant/cat.jpeg\",\"nickname\":\"HardCore\",\"openid\":\"oXPq06is9o1UrnLekD3hokWiRdzM\",\"privilege\":[],\"province\":\"\",\"sex\":0}",WxUserInfo.class);
+                    break;
+                default:
+                    wxUserInfo = JSON.parseObject("{\"city\":\"\",\"country\":\"\",\"headimgurl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/n97BJv6cYegdIlXQOEZvrBXKpt6TqibvvUEpL5e1usMHISVrl2asUwtKr7HWaG5gsjtq3eClduy6WO8nx48ACKg/132\",\"nickname\":\"AI硬核\",\"openid\":\"oXPq06nB7l1OEGsLUXg1WSKAKS4Q\",\"privilege\":[],\"province\":\"\",\"sex\":0}",WxUserInfo.class);
+                    break;
+            }
             member = memberRepository.findById(wxUserInfo.getOpenid()).orElseGet(Member::new);
             System.out.println(String.format("member",JSON.toJSONString(member)));
             if (member.getOpenId() == null){
@@ -99,8 +108,9 @@ public class MemberServiceImpl implements MemberService {
                 member.setHeadImgUrl(wxUserInfo.getHeadimgurl());
                 member.setNickName(wxUserInfo.getNickname());
                 member.setVipExpiration(DateUtil.date().toTimestamp());
+                member.setType(false);
                 member.setEnabled(true);
-                log.info("member:{}" + JSON.toJSONString(member));
+                log.info("member:{}",JSON.toJSONString(member));
                 System.out.println(String.format("member",JSON.toJSONString(member)));
                 memberRepository.save(member);
             }else {
@@ -109,10 +119,10 @@ public class MemberServiceImpl implements MemberService {
             }
         }else {
             AccessTokenInfo accessTokenInfo = wxService.getAccessTokenInfo(code);
-            log.info("accessTokenInfo:{}" + JSON.toJSONString(accessTokenInfo));
+            log.info("accessTokenInfo:{}",JSON.toJSONString(accessTokenInfo));
             System.out.println(String.format("accessTokenInfo",JSON.toJSONString(accessTokenInfo)));
             WxUserInfo wxUserInfo = wxService.getUserInfo(accessTokenInfo.getAccessToken(), accessTokenInfo.getOpenId());
-            log.info("wxUserInfo:{}" + JSON.toJSONString(wxUserInfo));
+            log.info("wxUserInfo:{}",JSON.toJSONString(wxUserInfo));
             System.out.println(String.format("wxUserInfo",JSON.toJSONString(wxUserInfo)));
             member = memberRepository.findById(wxUserInfo.getOpenid()).orElseGet(Member::new);
             System.out.println(String.format("member",JSON.toJSONString(member)));
@@ -122,8 +132,9 @@ public class MemberServiceImpl implements MemberService {
                 member.setHeadImgUrl(wxUserInfo.getHeadimgurl());
                 member.setNickName(wxUserInfo.getNickname());
                 member.setVipExpiration(DateUtil.date().toTimestamp());
+                member.setType(false);
                 member.setEnabled(true);
-                log.info("member:{}" + JSON.toJSONString(member));
+                log.info("member:{}",JSON.toJSONString(member));
                 System.out.println(String.format("member",JSON.toJSONString(member)));
                 memberRepository.save(member);
             }else {

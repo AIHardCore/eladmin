@@ -15,20 +15,19 @@
 */
 package me.zhengjie.modules.system.repository;
 
-import me.zhengjie.modules.system.domain.Order;
+import me.zhengjie.modules.system.domain.ArticleReadingLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 /**
 * @website https://eladmin.vip
-* @author hardcore
-* @date 2024-06-30
+* @author hardcoer
+* @date 2024-07-20
 **/
-public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecificationExecutor<Order> {
-    @Query(value = "select ifnull(sum(amount),0) div 100 from app_order where status = 0",nativeQuery = true)
-    long sum();
+public interface ArticleReadingLogRepository extends JpaRepository<ArticleReadingLog, Long>, JpaSpecificationExecutor<ArticleReadingLog> {
+    ArticleReadingLog findByArticleAndOpenIdAndType(Long articleId, String openId, boolean type);
 
-    @Query(value = "select ifnull(sum(amount),0) div 100 from app_order where status = 0 and create_time >= date(now())",nativeQuery = true)
-    long sumToday();
+    @Query(value = "select count(id) from app_article_reading_log where article = ?1 and open_id = ?2 and type = ?3", nativeQuery = true)
+    long countByArticleAndOpenIdAndType(Long articleId, String openId, boolean type);
 }

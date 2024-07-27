@@ -24,6 +24,7 @@ import me.zhengjie.modules.system.domain.Member;
 import me.zhengjie.modules.system.service.MemberService;
 import me.zhengjie.modules.system.service.dto.MemberDto;
 import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,16 +37,16 @@ import org.springframework.web.bind.annotation.*;
 **/
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "用户管理")
+@Api(tags = "APP用户管理")
 @RequestMapping("/app/member")
 public class MemberController {
 
     private final MemberService memberService;
 
     @PutMapping()
-    @Log("修改手机号")
-    @ApiOperation("查询专栏")
-        public ResponseEntity<Object> updatePhone(@Validated @RequestBody Member member){
+    @Log(type = LogTypeEnum.APP,module = "APP用户")
+    @ApiOperation("修改手机号")
+    public ResponseEntity<Object> updatePhone(@Validated @RequestBody Member member){
         memberService.updatePhone(member.getPhone());
         return new ResponseEntity<>(HttpStatus.OK);
     }

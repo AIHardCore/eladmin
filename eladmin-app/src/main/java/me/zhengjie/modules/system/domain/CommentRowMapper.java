@@ -12,6 +12,7 @@ public class CommentRowMapper implements RowMapper<Comment> {
         Comment comment = new Comment();
         comment.setId(rs.getLong("id"));
         comment.setMessage(rs.getString("message"));
+        comment.setReply(rs.getString("reply"));
         comment.setLikes(rs.getInt("likes"));
         Member member = new Member();
         member.setNickName(rs.getString("nick_name"));

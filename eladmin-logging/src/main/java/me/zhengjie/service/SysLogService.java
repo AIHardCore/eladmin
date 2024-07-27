@@ -25,7 +25,9 @@ import org.springframework.scheduling.annotation.Async;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Zheng Jie
@@ -73,6 +75,36 @@ public interface SysLogService {
      * @return Object
      */
     Object findByErrDetail(Long id);
+
+
+    /**
+     * 登录日志统计
+     * @param success Boolean
+     * @return
+     */
+    long countLogin(Boolean success);
+
+    /**
+     * 登录日志统计
+     * @param success Boolean
+     * @return
+     */
+    long countLoginToday(Boolean success);
+
+    /**
+     * 登录日志周期统计
+     * @param begin Timestamp
+     * @param end Timestamp
+     * @param success Boolean
+     * @return
+     */
+    long countLoginCycle(Timestamp begin,Timestamp end,Boolean success);
+
+    /**
+     *
+     * @return
+     */
+    List<Map<String, Object>> loginLog(String begin,String end, long howLong,Boolean success);
 
     /**
      * 导出日志

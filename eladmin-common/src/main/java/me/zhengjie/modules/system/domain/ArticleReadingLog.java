@@ -20,22 +20,25 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import me.zhengjie.base.BaseEntity;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
 * @website https://eladmin.vip
 * @description /
 * @author hardcoer
-* @date 2024-07-16
+* @date 2024-07-20
 **/
 @Entity
 @Data
-@Table(name="app_comment")
-public class Comment extends BaseEntity implements Serializable {
+@Table(name="app_article_reading_log")
+public class ArticleReadingLog extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,48 +46,45 @@ public class Comment extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "id")
     private Long id;
 
-    @JoinColumn(name = "article_id")
-    @ManyToOne(fetch=FetchType.LAZY)
-    @ApiModelProperty(value = "文章")
-    private Article article;
-
-    @Column(name = "`message`",nullable = false)
-    @NotBlank
-    @ApiModelProperty(value = "内容")
-    private String message;
-
-    @Column(name = "`reply`")
-    @ApiModelProperty(value = "回复内容")
-    private String reply;
-
-    @ManyToOne
-    @JoinColumn(name = "open_id")
-    @NotBlank
-    @ApiModelProperty(value = "用户")
-    Member member;
-
-    @Column(name = "`likes`")
+    @Column(name = "`article`",nullable = false)
     @NotNull
-    @ApiModelProperty(value = "点赞数")
-    private int likes = 0;
+    @ApiModelProperty(value = "文章id")
+    private Long article;
 
-    @Version
-    @Column(name = "`version`")
-    @ApiModelProperty(value = "乐观锁")
-    private int version;
+    @Column(name = "`open_id`",nullable = false)
+    @NotBlank
+    @ApiModelProperty(value = "用户openId")
+    private String openId;
 
-    @Column(name = "`real`")
-    @ApiModelProperty(value = "是否真是留言")
-    private Boolean real = true;
+    @Column(name = "`type`",nullable = false)
+    @NotNull
+    @ApiModelProperty(value = "类型")
+    private Boolean type;
 
-    @Column(name = "`enabled`")
-    @ApiModelProperty(value = "状态")
-    private Boolean enabled;
+    @Column(name = "`ip`",nullable = false)
+    @NotBlank
+    @ApiModelProperty(value = "源ip")
+    private String ip;
 
-    @Transient
-    private int active;
+    @Column(name = "`create_by`")
+    @ApiModelProperty(value = "创建者")
+    private String createBy;
 
-    public void copy(Comment source){
+    @Column(name = "`update_by`")
+    @ApiModelProperty(value = "更新者")
+    private String updateBy;
+
+    @Column(name = "`create_time`")
+    @CreationTimestamp
+    @ApiModelProperty(value = "创建日期")
+    private Timestamp createTime;
+
+    @Column(name = "`update_time`")
+    @UpdateTimestamp
+    @ApiModelProperty(value = "更新时间")
+    private Timestamp updateTime;
+
+    public void copy(ArticleReadingLog source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

@@ -17,7 +17,6 @@ package me.zhengjie.modules.system.service.dto;
 
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -25,36 +24,24 @@ import java.sql.Timestamp;
 * @website https://eladmin.vip
 * @description /
 * @author hardcoer
-* @date 2024-07-16
+* @date 2024-07-20
 **/
 @Data
-public class CommentDto implements Serializable {
+public class ArticleReadingLogDto implements Serializable {
 
     private Long id;
 
-    /** 内容 */
-    private String message;
-
-    /** 回复内容 */
-    private String reply;
-
-    /** 文章 */
-    private ArticleDto article;
+    /** 文章id */
+    private Long article;
 
     /** 用户openId */
-    private MemberDto member;
+    private String openId;
 
-    /** 点赞数 */
-    private int likes;
+    /** 类型 */
+    private Boolean type;
 
-    /** 是否真是留言 */
-    private Boolean real;
-
-    /** 状态 */
-    private Boolean enabled;
-
-    @Transient
-    private int active;
+    /** 源ip */
+    private String ip;
 
     /** 创建者 */
     private String createBy;

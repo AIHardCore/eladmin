@@ -22,6 +22,7 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.system.service.SpecialService;
 import me.zhengjie.modules.system.service.dto.SpecialDto;
 import me.zhengjie.modules.system.service.dto.SpecialQueryCriteria;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,14 +46,14 @@ public class SpecialController {
     private final SpecialService specialService;
 
     @GetMapping
-    @Log("查询专栏")
+    @Log(type = LogTypeEnum.APP,module = "专栏")
     @ApiOperation("查询专栏")
         public ResponseEntity<List<SpecialDto>> querySpecial(SpecialQueryCriteria criteria){
         return new ResponseEntity<>(specialService.queryAll(criteria),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    @Log("查询专栏")
+    @Log(type = LogTypeEnum.APP,module = "专栏")
     @ApiOperation("查询专栏")
         public ResponseEntity<SpecialDto> querySpecial(@PathVariable Long id){
         return new ResponseEntity<>(specialService.findById(id),HttpStatus.OK);

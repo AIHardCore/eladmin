@@ -1,4 +1,5 @@
 <#--noinspection ALL-->
+<#assign hasEnabled = 0>
 <template>
   <div class="app-container">
     <!--工具栏-->
@@ -74,22 +75,34 @@
         </div>
       </el-dialog>
       <!--表格渲染-->
-      <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+      <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler"  @sort-change="crud.sortChangeHandler" :header-cell-class-name="crud.setHeaderClass">
         <el-table-column type="selection" width="55" />
         <#if columns??>
-            <#list columns as column>
-            <#if column.columnShow>
-          <#if (column.dictName)?? && (column.dictName)!="">
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>">
+          <#list columns as column>
+    <#if column.columnShow>
+      <#if (column.dictName)?? && (column.dictName)!="">
+        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" sortable="true">
           <template slot-scope="scope">
             {{ dict.label.${column.dictName}[scope.row.${column.changeColumnName}] }}
           </template>
         </el-table-column>
-                <#else>
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" />
-                </#if>
-            </#if>
-            </#list>
+        <#elseif column.changeColumnName == "enabled" && column.columnType == "Boolean" >
+          <#assign hasEnabled = 1>
+        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" sortable="true">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.${column.changeColumnName}"
+              active-color="#409EFF"
+              inactive-color="#F56C6C"
+              @change="changeEnabled(scope.row, scope.row.${column.changeColumnName})"
+            />
+          </template>
+        </el-table-column>
+        <#else>
+        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>"  sortable="true" />
+        </#if>
+      </#if>
+          </#list>
         </#if>
         <el-table-column v-if="checkPer(['admin','${changeClassName}:edit','${changeClassName}:del'])" label="操作" width="150px" align="center">
           <template slot-scope="scope">
@@ -114,7 +127,7 @@ import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 
-const defaultForm = { <#if columns??><#list columns as column>${column.changeColumnName}: null<#if column_has_next>, </#if></#list></#if> }
+const defaultForm = { <#if columns??><#list columns as column>${column.changeColumnName}: <#if column.changeColumnName == "enabled" && column.columnType == "Boolean">false<#else>null</#if><#if column_has_next>, </#if></#list></#if> }
 export default {
   name: '${className}',
   components: { pagination, crudOperation, rrOperation, udOperation },
@@ -159,7 +172,38 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    // 新增与编辑前做的操作
+    [CRUD.HOOK.afterToCU](crud, form) {
+      form.enabled = form.enabled.toString()
+    },
+    // 新增前的操作
+    [CRUD.HOOK.beforeToAdd]() {
+    },
+    // 初始化编辑时候的操作
+    [CRUD.HOOK.beforeToEdit](crud, form) {
+    },
+    // 提交前做的操作
+    [CRUD.HOOK.afterValidateCU](crud) {
+      return true
+    }<#if hasEnabled == 1 >,
+    // 改变状态
+    changeEnabled(data, val) {
+      this.$confirm('此操作将 "' + this.dict.label.user_status[val] + '" ' + data.member.nickName + ', 是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        crud${className}.edit(data).then(res => {
+          this.crud.notify(this.dict.label.user_status[val] + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+        }).catch(() => {
+          data.enabled = !data.enabled
+        })
+      }).catch(() => {
+        data.enabled = !data.enabled
+      })
     }
+    </#if>
   }
 }
 </script>

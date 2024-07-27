@@ -13,29 +13,20 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 */
-package me.zhengjie.modules.system.service.dto;
+package me.zhengjie.modules.system.service.mapstruct;
 
-import lombok.Data;
-import me.zhengjie.annotation.Query;
-import me.zhengjie.modules.system.domain.CommentLike;
+import me.zhengjie.base.BaseMapper;
+import me.zhengjie.modules.system.domain.ArticleReadingLog;
+import me.zhengjie.modules.system.service.dto.ArticleReadingLogDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 /**
 * @website https://eladmin.vip
-* @author hardcore
-* @date 2024-07-17
+* @author hardcoer
+* @date 2024-07-20
 **/
-@Data
-public class CommentLikeQueryCriteria{
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface ArticleReadingLogMapper extends BaseMapper<ArticleReadingLogDto, ArticleReadingLog> {
 
-    /** 精确 */
-    @Query
-    private CommentLike.CompositeKey key;
-
-    /** 精确 */
-    @Query
-    private String to;
-
-    /** 精确 */
-    @Query
-    private String from;
 }

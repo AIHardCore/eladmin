@@ -18,12 +18,13 @@ package me.zhengjie.modules.system.service;
 import me.zhengjie.modules.system.domain.Order;
 import me.zhengjie.modules.system.service.dto.OrderDto;
 import me.zhengjie.modules.system.service.dto.OrderQueryCriteria;
-import org.springframework.data.domain.Pageable;
-import java.util.Map;
-import java.util.List;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
 import me.zhengjie.utils.PageResult;
+import org.springframework.data.domain.Pageable;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
 * @website https://eladmin.vip
@@ -66,6 +67,15 @@ public interface OrderService {
     * @param resources /
     */
     void update(Order resources);
+
+    /**
+     * 订单周期每日统计记录
+     * @param begin 开始日期字符串
+     * @param end 结束日期字符串
+     * @param status
+     * @return
+     */
+    List<Map<String,Object>> logs(String begin, String end, long howLong, int status);
 
     /**
     * 多选删除

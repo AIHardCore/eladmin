@@ -15,29 +15,27 @@
 */
 package me.zhengjie.modules.system.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.domain.Article;
 import me.zhengjie.modules.system.domain.ArticleBody;
 import me.zhengjie.modules.system.domain.Member;
 import me.zhengjie.modules.system.repository.ArticleBodyRepository;
+import me.zhengjie.modules.system.repository.ArticleRepository;
 import me.zhengjie.modules.system.repository.MemberRepository;
 import me.zhengjie.modules.system.service.ArticleService;
 import me.zhengjie.modules.system.service.async.AsyncArticleService;
-import me.zhengjie.modules.system.service.mapstruct.ArticleMapper;
-import me.zhengjie.modules.system.repository.ArticleRepository;
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
+import me.zhengjie.modules.system.service.mapstruct.ArticleMapper;
 import me.zhengjie.utils.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.OptimisticLockException;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @website https://eladmin.vip
@@ -68,7 +66,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public ArticleDto findById(Long id) {
+    public ArticleDto findById(Long id, HttpServletRequest request) {
+        String ip = StringUtils.getIp(request);
         Article article = articleRepository.findByIdAndEnabled(id,true).orElseGet(Article::new);
         ValidationUtil.isNull(article.getId(),"Article","id",id);
         JwtUserDto jwtUserDto = (JwtUserDto) SecurityUtils.getCurrentUser();
@@ -77,7 +76,9 @@ public class ArticleServiceImpl implements ArticleService {
         if (member.getType()){
             ArticleBody articleBody = articleBodyRepository.findById(article.getId()).orElseGet(ArticleBody::new);
             article.setBody(articleBody.getBody());
-            asyncArticleService.read(article.getId());
+            asyncArticleService.read(article.getId(),member.getOpenId(), true, ip);
+        }else {
+            asyncArticleService.read(article.getId(),member.getOpenId(), false, ip);
         }
         return articleMapper.toDto(article);
     }

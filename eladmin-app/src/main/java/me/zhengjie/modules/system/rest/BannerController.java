@@ -18,12 +18,12 @@ package me.zhengjie.modules.system.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import me.zhengjie.annotation.AnonymousAccess;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.system.service.BannerService;
 import me.zhengjie.modules.system.service.dto.BannerDto;
 import me.zhengjie.modules.system.service.dto.BannerQueryCriteria;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +45,7 @@ public class BannerController {
     private final BannerService bannerService;
 
     @GetMapping
-    @Log("查询轮播图")
+    @Log(type = LogTypeEnum.APP,module = "轮播图")
     @ApiOperation("查询轮播图")
     public ResponseEntity<PageResult<BannerDto>> queryBanner(BannerQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(bannerService.queryAll(criteria,pageable),HttpStatus.OK);

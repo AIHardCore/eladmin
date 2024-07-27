@@ -16,7 +16,6 @@
 package me.zhengjie.modules.system.service.dto;
 
 import lombok.Data;
-import java.util.List;
 import me.zhengjie.annotation.Query;
 
 /**
@@ -29,4 +28,38 @@ public class CommentQueryCriteria{
     private Long articleId;
 
     public String openId;
+
+    @Query(type = Query.Type.INNER_LIKE,joinName = "member",propName = "nickName")
+    public String nickName;
+
+    @Query(type = Query.Type.INNER_LIKE)
+    public String message;
+
+    public boolean queryReply;
+
+    public void setQueryReply(boolean queryReply) {
+        this.queryReply = queryReply;
+        this.unreply = queryReply ? null:false;
+        this.replied = queryReply ? true:null;
+    }
+
+    /**
+     * 未回复
+     */
+    @Query(type = Query.Type.IS_NULL, propName = "reply")
+    public Boolean unreply;
+
+    /**
+     * 已回复
+     */
+    @Query(type = Query.Type.NOT_NULL, propName = "reply")
+    public Boolean replied;
+
+    public boolean isUnreply() {
+        return queryReply ? null:false;
+    }
+
+    public boolean isReplied() {
+        return queryReply ? true:null;
+    }
 }

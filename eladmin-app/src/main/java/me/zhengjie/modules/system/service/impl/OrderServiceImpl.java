@@ -32,7 +32,6 @@ import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.domain.Member;
 import me.zhengjie.modules.system.domain.Order;
-import me.zhengjie.modules.system.domain.Produce;
 import me.zhengjie.modules.system.repository.MemberRepository;
 import me.zhengjie.modules.system.repository.OrderRepository;
 import me.zhengjie.modules.system.service.OrderService;
@@ -98,11 +97,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PrepayWithRequestPaymentResponse create(Order resources) {
+        JwtUserDto jwtUserDto = (JwtUserDto)SecurityUtils.getCurrentUser();
         ProduceDto produce = produceService.findById(resources.getProduceId());
         if (produce == null || produce.getId() == null){
             throw new BadRequestException("商品不存在");
         }
-        Member member = memberRepository.findById(((JwtUserDto)SecurityUtils.getCurrentUser()).getUser().getOpenId()).orElseGet(Member::new);
+        Member member = memberRepository.findById(jwtUserDto.getUser().getOpenId()).orElseGet(Member::new);
         resources.setMember(member);
         resources.setAmount(produce.getPrice());
         resources.setOutTradeNo(alipayUtils.getOrderCode());
@@ -197,10 +197,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(Order resources) {
-        Order order = orderRepository.findById(resources.getOutTradeNo()).orElseGet(Order::new);
-        ValidationUtil.isNull( order.getOutTradeNo(),"Order","id",resources.getOutTradeNo());
-        order.copy(resources);
-        orderRepository.save(order);
+        JwtUserDto jwtUserDto = (JwtUserDto)SecurityUtils.getCurrentUser();
+        if (jwtUserDto.getUser().getOpenId().equals(resources.getMember().getOpenId())){
+            Order order = orderRepository.findById(resources.getOutTradeNo()).orElseGet(Order::new);
+            ValidationUtil.isNull( order.getOutTradeNo(),"Order","id",resources.getOutTradeNo());
+            order.copy(resources);
+            orderRepository.save(order);
+        }
     }
 
     @Override

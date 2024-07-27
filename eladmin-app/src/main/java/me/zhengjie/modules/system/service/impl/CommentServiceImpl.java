@@ -67,13 +67,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PageResult<CommentDto> page(CommentQueryCriteria criteria, Pageable pageable){
         JwtUserDto jwtUserDto = (JwtUserDto) SecurityUtils.getCurrentUser();
-        String sql = String.format("select t1.id,t1.message,t1.open_id,t1.likes,t1.enabled,t1.version,t1.create_by,t1.update_by,t1.create_time,t1.update_time,m.nick_name , " +
+        String sql = String.format("select t1.id,t1.message,t1.reply,t1.open_id,t1.likes,t1.enabled,t1.version,t1.create_by,t1.update_by,t1.create_time,t1.update_time,m.nick_name , " +
                         "case when exists ( select 1 from app_comment_like t2 where t2.id = t1.id and t2.from = '%s' ) then 1 else 0 end as active from app_comment t1 " +
                         "left join app_article a on a.id = t1.article_id left join app_member m on t1.open_id = m.open_id where t1.article_id = %s and (t1.enabled = 1 or t1.open_id = '%s') " +
                         "order by t1.likes desc,t1.create_time desc limit %s,%s"
                 ,jwtUserDto.getUser().getOpenId(),criteria.getArticleId(),jwtUserDto.getUser().getOpenId(),pageable.getOffset(),pageable.getPageSize());
         List<Comment> comments = jdbcTemplate.query(sql,new CommentRowMapper());
-        Page<Comment> page = new PageImpl<>(comments);
+        String countSql = String.format("select count(id) from app_comment where article_id = %s and (enabled = 1 or open_id = '%s') ",criteria.getArticleId(),jwtUserDto.getUser().getOpenId());
+        int count = jdbcTemplate.queryForObject(countSql,Integer.class);
+        Page<Comment> page = new PageImpl<>(comments,pageable,count);
         return PageUtil.toPage(page.map(commentMapper::toDto));
     }
 

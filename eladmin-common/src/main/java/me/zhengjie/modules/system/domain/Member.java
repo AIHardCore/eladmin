@@ -21,6 +21,7 @@ import cn.hutool.core.date.DateUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.base.BaseEntity;
 
 import javax.persistence.Column;
@@ -41,6 +42,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
+@Slf4j
 @Table(name="app_member")
 public class Member extends BaseEntity implements Serializable {
 
@@ -80,7 +82,8 @@ public class Member extends BaseEntity implements Serializable {
 
     public Boolean getType() {
         if (vipExpiration == null) return null;
-        if (vipExpiration.compareTo(DateUtil.date()) >= 0){
+        log.info("compareTo:{}",vipExpiration.compareTo(DateUtil.date().toTimestamp()));
+        if (vipExpiration.compareTo(DateUtil.date().toTimestamp()) >= 0){
             return true;
         }else {
             return false;
@@ -89,7 +92,8 @@ public class Member extends BaseEntity implements Serializable {
 
     public void setVipExpiration(Timestamp vipExpiration) {
         this.vipExpiration = vipExpiration;
-        if (vipExpiration.compareTo(DateUtil.date()) >= 0){
+        log.info("compareTo:{}",vipExpiration.compareTo(DateUtil.date().toTimestamp()));
+        if (vipExpiration.compareTo(DateUtil.date().toTimestamp()) >= 0){
             type = true;
         }else {
             type = false;

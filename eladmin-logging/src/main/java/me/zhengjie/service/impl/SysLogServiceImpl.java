@@ -19,6 +19,7 @@ import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.repository.LogRepository;
@@ -32,15 +33,18 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -53,6 +57,7 @@ public class SysLogServiceImpl implements SysLogService {
     private final LogRepository logRepository;
     private final LogErrorMapper logErrorMapper;
     private final LogSmallMapper logSmallMapper;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Object queryAll(SysLogQueryCriteria criteria, Pageable pageable) {
@@ -84,13 +89,15 @@ public class SysLogServiceImpl implements SysLogService {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         me.zhengjie.annotation.Log aopLog = method.getAnnotation(me.zhengjie.annotation.Log.class);
+        ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+        String description = StringUtils.isNoneEmpty(aopLog.value()) ? aopLog.value() : StringUtils.isNoneEmpty(apiOperation.value()) ? apiOperation.value() : null;
 
         // 方法路径
         String methodName = joinPoint.getTarget().getClass().getName() + "." + signature.getName() + "()";
 
         // 描述
-        sysLog.setDescription(aopLog.value());
-        
+        sysLog.setDescription(description);
+
         sysLog.setRequestIp(ip);
         sysLog.setAddress(StringUtils.getCityInfo(sysLog.getRequestIp()));
         sysLog.setMethod(methodName);
@@ -146,6 +153,76 @@ public class SysLogServiceImpl implements SysLogService {
         ValidationUtil.isNull(sysLog.getId(), "Log", "id", id);
         byte[] details = sysLog.getExceptionDetail();
         return Dict.create().set("exception", new String(ObjectUtil.isNotNull(details) ? details : "".getBytes()));
+    }
+
+    @Override
+    public long countLogin(Boolean success) {
+        if (success == null) return logRepository.countLogin();
+        if (success) {
+            return logRepository.countLoginSuccess();
+        } else{
+            return logRepository.countLoginFail();
+        }
+    }
+
+    @Override
+    public long countLoginToday(Boolean success) {
+        if (success == null) return logRepository.countLoginToday();
+        if (success) {
+            return logRepository.countLoginTodaySuccess();
+        } else{
+            return logRepository.countLoginTodayFail();
+        }
+    }
+
+    @Override
+    public long countLoginCycle(Timestamp begin, Timestamp end, Boolean success) {
+        if (success == null) return logRepository.countLoginOfCycle(begin,end);
+        if (success) {
+            return logRepository.countLoginOfCycleSuccess(begin,end);
+        } else{
+            return logRepository.countLoginOfCycleFail(begin,end);
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> loginLog(String begin, String end, long howLong, Boolean success) {
+        String param = "%s ";
+        if (success != null && success){
+            param = String.format(param,"and exception_detail is null");
+        }else if (success != null && !success) {
+            param = String.format(param,"and exception_detail is not null");
+        }else {
+            param = String.format(param,"");
+        }
+        String sql =
+                "select " +
+                " t3.days, " +
+                " max(t3.num) num " +
+                "from " +
+                " ( " +
+                " SELECT " +
+                "  @cdate := date_add(@cdate, interval -1 day) days, " +
+                "  0 as num " +
+                " from " +
+                "  ( " +
+                "  SELECT " +
+                "   @cdate := DATE_ADD( '" + end.split(" ")[0] + "', INTERVAL + 1 day) " +
+                "  from " +
+                "   sys_log " +
+                "  limit " + howLong + " ) t1 " +
+                "UNION ALL (" +
+                //以下为你所需要查询得业务表根据日期统计数据-begin
+                "select DATE_FORMAT(create_time, '%Y-%m-%d') AS dateStr,ifnull(count(log_id),0) as num from sys_log " +
+                "where description = 'APP用户登录' and create_time BETWEEN '" + begin + "' and '" + end + "'" + param +
+                "group by DATE_FORMAT(create_time, '%Y-%m-%d') " +
+                //以下为你所需要查询得业务表根据日期统计数据-end
+                ")) t3 " +
+                "where " +
+                " t3.days between '"+ begin.split(" ")[0] +"' and '"+ end.split(" ")[0] +"' " +
+                "GROUP BY " +
+                " t3.days order by t3.days asc";
+        return jdbcTemplate.queryForList(sql);
     }
 
     @Override

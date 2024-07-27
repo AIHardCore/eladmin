@@ -38,6 +38,7 @@ import me.zhengjie.service.WxService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,7 +88,7 @@ public class WxServiceImpl implements WxService {
         AccessTokenInfo accessTokenInfo = JSON.parseObject(result,AccessTokenInfo.class);
         log.info("accessTokenInfo:{}",accessTokenInfo);
         if (accessTokenInfo.getErrcode() != null){
-            throw new BadRequestException("获取AccessToken信息失败！");
+            throw new BadRequestException(HttpStatus.INTERNAL_SERVER_ERROR,"获取AccessToken信息失败:" + result);
         }
         return accessTokenInfo;
     }

@@ -15,28 +15,26 @@
 */
 package me.zhengjie.modules.system.service.impl;
 
-import me.zhengjie.modules.system.domain.ArticleBody;
-import me.zhengjie.modules.system.service.dto.ArticleBodyDto;
-import me.zhengjie.modules.system.service.dto.ArticleContentQueryCriteria;
-import me.zhengjie.utils.ValidationUtil;
-import me.zhengjie.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.modules.system.domain.ArticleBody;
 import me.zhengjie.modules.system.repository.ArticleBodyRepository;
 import me.zhengjie.modules.system.service.ArticleBodyService;
+import me.zhengjie.modules.system.service.dto.ArticleBodyDto;
+import me.zhengjie.modules.system.service.dto.ArticleContentQueryCriteria;
 import me.zhengjie.modules.system.service.mapstruct.ArticleBodyMapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @website https://eladmin.vip
@@ -83,6 +81,36 @@ public class ArticleBodyServiceImpl implements ArticleBodyService {
         ValidationUtil.isNull( articleBody.getArticleId(),"ArticleBody","id",resources.getArticleId());
         articleBody.copy(resources);
         articleBodyRepository.save(articleBody);
+    }
+
+    @Override
+    public void updateBodyImg() {
+        String filename = "F:\\图片\\qiniuyun\\migration\\files.txt"; // 输入文件名
+        Map<String,String> pathMap = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                pathMap.put(line.split("/?e=")[0],line);
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+        ArticleContentQueryCriteria criteria = new ArticleContentQueryCriteria();
+        List<ArticleBody> articleBodies = articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+        String regex = "https?://[^\\s]+=";
+        Pattern pattern = Pattern.compile(regex);
+        String body = "";
+        for (ArticleBody item : articleBodies){
+            Matcher matcher = pattern.matcher(item.getBody());
+            body = item.getBody();
+            while (matcher.find()) {
+                String result = matcher.group();
+                String path = result.split("/?e=")[0].replace("http://sgntn4y48.hn-bkt.clouddn.com","http://sanchuanwenhua.com");
+                body = body.replace(result,pathMap.get(path));
+            }
+            item.setBody(body);
+            articleBodyRepository.save(item);
+        }
     }
 
     @Override

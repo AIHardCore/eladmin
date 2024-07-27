@@ -15,24 +15,25 @@
 */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.system.domain.ArticleBody;
 import me.zhengjie.modules.system.service.ArticleBodyService;
 import me.zhengjie.modules.system.service.dto.ArticleBodyDto;
 import me.zhengjie.modules.system.service.dto.ArticleContentQueryCriteria;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
-import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-
-import me.zhengjie.utils.PageResult;
+import java.io.IOException;
 
 /**
 * @website https://eladmin.vip
@@ -61,6 +62,14 @@ public class ArticleBodyController {
     public ResponseEntity<PageResult<ArticleBodyDto>> queryArticleContent(ArticleContentQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(articleBodyService.queryAll(criteria,pageable),HttpStatus.OK);
     }
+
+    /*@GetMapping("/updateBodyImg")
+    @ApiOperation("查询 文章正文")
+    @AnonymousGetMapping("/updateBodyImg")
+    public ResponseEntity<PageResult<ArticleBodyDto>> updateBodyImg(){
+        articleBodyService.updateBodyImg();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }*/
 
     @PostMapping
     @ApiOperation("新增 文章正文")

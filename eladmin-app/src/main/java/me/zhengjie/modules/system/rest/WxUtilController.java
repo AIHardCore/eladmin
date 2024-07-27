@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.annotation.rest.AnonymousPostMapping;
+import me.zhengjie.annotation.rest.AnonymousGetMapping;
 import me.zhengjie.domain.WxConfig;
 import me.zhengjie.modules.system.service.OrderService;
 import me.zhengjie.service.WxService;
@@ -34,15 +34,16 @@ public class WxUtilController {
     @GetMapping("/url/code")
     @Log("查询微信授权Url")
     @ApiOperation("查询微信授权Url")
+    @AnonymousGetMapping(value = "/code")
     public ResponseEntity<String> code(){
         WxConfig wxConfig = wxService.find();
-        return new ResponseEntity<>(wxConfig.getCodeUrl().replace("{APPID}",wxConfig.getAppId()).replace("{REDIRECT_URI}",wxConfig.getRedirectUri()), HttpStatus.OK);
+        return new ResponseEntity<>(wxConfig.getCodeUrl().replace("{APPID}",wxConfig.getAppId()), HttpStatus.OK);
     }
 
     @RequestMapping("/notify")
     @Log("处理支付回调")
     @ApiOperation("处理支付回调")
-    @AnonymousPostMapping(value = "/notify")
+    @AnonymousGetMapping(value = "/notify")
     public ResponseEntity.BodyBuilder notify(HttpServletRequest request){
         return orderService.notify(request);
     }

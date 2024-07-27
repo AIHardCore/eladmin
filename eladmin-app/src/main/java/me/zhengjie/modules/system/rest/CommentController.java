@@ -15,27 +15,21 @@
 */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.domain.Comment;
-import me.zhengjie.modules.system.domain.CommentLike;
 import me.zhengjie.modules.system.service.CommentService;
 import me.zhengjie.modules.system.service.dto.CommentDto;
 import me.zhengjie.modules.system.service.dto.CommentQueryCriteria;
-import me.zhengjie.utils.SecurityUtils;
-import org.mapstruct.Mappings;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.springframework.data.domain.Pageable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
@@ -51,30 +45,22 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    @Log("查询留言")
+    @Log(type = LogTypeEnum.APP,module = "留言")
     @ApiOperation("查询留言")
     public ResponseEntity<PageResult<CommentDto>> queryComment(CommentQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(commentService.page(criteria,pageable),HttpStatus.OK);
     }
 
     @PostMapping
-    @Log("新增留言")
+    @Log(type = LogTypeEnum.APP,module = "留言")
     @ApiOperation("新增留言")
     public ResponseEntity<Object> createComment(@Validated @RequestBody Comment resources){
         CommentDto commentDto = commentService.create(resources);
         return new ResponseEntity<>(commentDto,HttpStatus.OK);
     }
 
-    @PutMapping
-    @Log("修改留言")
-    @ApiOperation("修改留言")
-    public ResponseEntity<Object> updateComment(@Validated @RequestBody Comment resources){
-        commentService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @PutMapping("/like/{id}")
-    @Log("点赞留言")
+    @Log(type = LogTypeEnum.APP,module = "留言")
     @ApiOperation("点赞留言")
     public ResponseEntity<Object> like(@PathVariable Long id) throws InterruptedException {
         commentService.like(id);
@@ -82,18 +68,10 @@ public class CommentController {
     }
 
     @PutMapping("unlike/{id}")
-    @Log("取消点赞留言")
-    @ApiOperation("取消点赞留言")
+    @Log(type = LogTypeEnum.APP,module = "留言")
+    @ApiOperation("取消留言点赞")
     public ResponseEntity<Object> unlike(@PathVariable Long id) throws InterruptedException {
         commentService.unlike(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping
-    @Log("删除留言")
-    @ApiOperation("删除留言")
-    public ResponseEntity<Object> deleteComment(@RequestBody Long[] ids) {
-        commentService.deleteAll(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

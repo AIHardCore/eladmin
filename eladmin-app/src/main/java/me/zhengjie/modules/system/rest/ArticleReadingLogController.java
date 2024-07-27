@@ -19,34 +19,36 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.system.service.ArticleContentService;
-import me.zhengjie.modules.system.service.dto.ArticleBodyDto;
-import me.zhengjie.modules.system.service.dto.ArticleContentQueryCriteria;
+import me.zhengjie.modules.system.service.ArticleReadingLogService;
+import me.zhengjie.modules.system.service.dto.ArticleReadingLogDto;
+import me.zhengjie.modules.system.service.dto.ArticleReadingLogQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
 * @website https://eladmin.vip
-* @author hardcore
-* @date 2024-06-19
+* @author hardcoer
+* @date 2024-07-20
 **/
 @RestController
 @RequiredArgsConstructor
-@Api(tags = " 文章正文管理")
-@RequestMapping("/app/articleContent")
-public class ArticleContentController {
+@Api(tags = "阅读记录管理")
+@RequestMapping("/api/articleReadingLog")
+public class ArticleReadingLogController {
 
-    private final ArticleContentService articleContentService;
+    private final ArticleReadingLogService articleReadingLogService;
 
     @GetMapping
-    @Log("查询 文章正文")
-    @ApiOperation("查询 文章正文")
-    public ResponseEntity<PageResult<ArticleBodyDto>> queryArticleContent(ArticleContentQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(articleContentService.queryAll(criteria,pageable),HttpStatus.OK);
+    @Log("查询阅读记录")
+    @ApiOperation("查询阅读记录")
+    @PreAuthorize("@el.check('articleReadingLog:list')")
+    public ResponseEntity<PageResult<ArticleReadingLogDto>> queryArticleReadingLog(ArticleReadingLogQueryCriteria criteria, Pageable pageable){
+        return new ResponseEntity<>(articleReadingLogService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 }

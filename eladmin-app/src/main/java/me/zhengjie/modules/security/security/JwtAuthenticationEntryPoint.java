@@ -15,7 +15,7 @@
  */
 package me.zhengjie.modules.security.security;
 
-import com.wechat.pay.java.core.http.UrlEncoder;
+import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.domain.WxConfig;
 import me.zhengjie.service.WxService;
 import org.springframework.security.core.AuthenticationException;
@@ -30,6 +30,7 @@ import java.io.IOException;
 /**
  * @author Zheng Jie
  */
+@Slf4j
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Resource
@@ -40,7 +41,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         WxConfig wxConfig = wxService.find();
+        String url = wxConfig.getCodeUrl().replace("{APPID}",wxConfig.getAppId());
+        log.info("授权Url:{}",url);
         // 当用户尝试访问安全的REST资源而不提供任何凭据时，将调用此方法发送401 响应
-        response.sendError(1001, wxConfig.getCodeUrl().replace("{APPID}",wxConfig.getAppId()).replace("{REDIRECT_URI}", UrlEncoder.urlEncode(wxConfig.getRedirectUri())));
+        response.sendError(1001, url);
     }
 }

@@ -17,10 +17,11 @@ package me.zhengjie.modules.system.service;
 
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
@@ -50,5 +51,5 @@ public interface ArticleService {
      * @param id ID
      * @return ArticleDto
      */
-    ArticleDto findById(Long id);
+    ArticleDto findById(Long id, HttpServletRequest request);
 }

@@ -18,12 +18,12 @@ package me.zhengjie.modules.system.service;
 import me.zhengjie.modules.system.domain.ArticleBody;
 import me.zhengjie.modules.system.service.dto.ArticleBodyDto;
 import me.zhengjie.modules.system.service.dto.ArticleContentQueryCriteria;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
-import me.zhengjie.utils.PageResult;
+import java.io.IOException;
+import java.util.List;
 
 /**
 * @website https://eladmin.vip
@@ -66,6 +66,11 @@ public interface ArticleBodyService {
     * @param resources /
     */
     void update(ArticleBody resources);
+
+    /**
+    * 编辑
+    */
+    void updateBodyImg();
 
     /**
     * 多选删除

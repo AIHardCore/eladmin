@@ -23,6 +23,7 @@ import me.zhengjie.modules.system.service.ProduceService;
 import me.zhengjie.modules.system.service.dto.ProduceDto;
 import me.zhengjie.modules.system.service.dto.ProduceQueryCriteria;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.enums.LogTypeEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class ProduceController {
     private final ProduceService produceService;
 
     @GetMapping
-    @Log("查询商品")
+    @Log(type = LogTypeEnum.APP,module = "商品")
     @ApiOperation("查询商品")
     public ResponseEntity<PageResult<ProduceDto>> queryProduce(ProduceQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(produceService.queryAll(criteria,pageable),HttpStatus.OK);

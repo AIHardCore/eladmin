@@ -17,25 +17,24 @@ package me.zhengjie.modules.system.service.dto;
 
 import lombok.Data;
 import me.zhengjie.annotation.Query;
-import me.zhengjie.modules.system.domain.CommentLike;
 
 /**
 * @website https://eladmin.vip
-* @author hardcore
-* @date 2024-07-17
+* @author hardcoer
+* @date 2024-07-20
 **/
 @Data
-public class CommentLikeQueryCriteria{
+public class ArticleReadingLogQueryCriteria{
+
+    /** 模糊 */
+    @Query(type = Query.Type.INNER_LIKE)
+    private Long article;
+
+    /** 模糊 */
+    @Query(type = Query.Type.INNER_LIKE)
+    private String openId;
 
     /** 精确 */
     @Query
-    private CommentLike.CompositeKey key;
-
-    /** 精确 */
-    @Query
-    private String to;
-
-    /** 精确 */
-    @Query
-    private String from;
+    private Boolean type;
 }

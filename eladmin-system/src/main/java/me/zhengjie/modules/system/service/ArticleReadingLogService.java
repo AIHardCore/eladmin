@@ -15,22 +15,23 @@
 */
 package me.zhengjie.modules.system.service;
 
-import me.zhengjie.modules.system.domain.Member;
-import me.zhengjie.modules.system.service.dto.MemberDto;
-import me.zhengjie.modules.system.service.dto.MemberQueryCriteria;
+import me.zhengjie.modules.system.domain.ArticleReadingLog;
+import me.zhengjie.modules.system.service.dto.ArticleReadingLogDto;
+import me.zhengjie.modules.system.service.dto.ArticleReadingLogQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
 * @website https://eladmin.vip
 * @description 服务接口
-* @author hardcore
-* @date 2024-06-19
+* @author hardcoer
+* @date 2024-07-20
 **/
-public interface MemberService {
+public interface ArticleReadingLogService {
 
     /**
     * 查询数据分页
@@ -38,44 +39,45 @@ public interface MemberService {
     * @param pageable 分页参数
     * @return Map<String,Object>
     */
-    PageResult<MemberDto> queryAll(MemberQueryCriteria criteria, Pageable pageable);
+    PageResult<ArticleReadingLogDto> queryAll(ArticleReadingLogQueryCriteria criteria, Pageable pageable);
 
     /**
     * 查询所有数据不分页
     * @param criteria 条件参数
-    * @return List<MemberDto>
+    * @return List<ArticleReadingLogDto>
     */
-    List<MemberDto> queryAll(MemberQueryCriteria criteria);
+    List<ArticleReadingLogDto> queryAll(ArticleReadingLogQueryCriteria criteria);
 
     /**
      * 根据ID查询
-     * @param openId ID
-     * @return MemberDto
+     * @param id ID
+     * @return ArticleReadingLogDto
      */
-    MemberDto findByOpenId(String openId);
-
-    /**
-     * 根据ID查询
-     * @param nickName
-     * @return MemberDto
-     */
-    MemberDto findByNickName(String nickName);
+    ArticleReadingLogDto findById(Long id);
 
     /**
     * 创建
     * @param resources /
     */
-    void create(Member resources);
+    void create(ArticleReadingLog resources);
 
     /**
-     * 微信授权
-     * @param code
-     */
-    Member login(String code, HttpServletRequest request);
+    * 编辑
+    * @param resources /
+    */
+    void update(ArticleReadingLog resources);
 
     /**
-     * 修改手机号
-     * @param phone
-     */
-    void updatePhone(String phone);
+    * 多选删除
+    * @param ids /
+    */
+    void deleteAll(Long[] ids);
+
+    /**
+    * 导出数据
+    * @param all 待导出的数据
+    * @param response /
+    * @throws IOException /
+    */
+    void download(List<ArticleReadingLogDto> all, HttpServletResponse response) throws IOException;
 }
