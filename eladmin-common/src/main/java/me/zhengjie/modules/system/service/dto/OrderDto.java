@@ -18,6 +18,7 @@ package me.zhengjie.modules.system.service.dto;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
+import me.zhengjie.modules.system.domain.Member;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -42,6 +43,9 @@ public class OrderDto extends BaseDTO implements Serializable {
 
     /** 商户订单号 */
     private String outTradeNo;
+
+    /** APP用户 */
+    private Member member;
 
     /** 价格 */
     private BigDecimal amount;
