@@ -65,7 +65,6 @@ public class RankController {
     @ApiOperation("新增爆文榜")
     @PreAuthorize("@el.check('rank:add')")
     public ResponseEntity<Object> createRank(@Validated @RequestBody Rank resources){
-        resources.setId(resources.getType() * 10 + resources.getSort());
         rankService.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
