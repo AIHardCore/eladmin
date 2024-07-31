@@ -46,6 +46,7 @@ public class Rank extends BaseEntity implements Serializable {
 
     @Id
     @Column(name = "`id`")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(value = "id")
     private Integer id;
 
