@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(jwtUserDto == null){
             MemberDto user;
             try {
-                user = userService.findByOpenId(openId);
+                user = userService.findByOpenId(openId.split("-")[1]);
             } catch (EntityNotFoundException e) {
                 // SpringSecurity会自动转换UsernameNotFoundException为BadCredentialsException
                 throw new UsernameNotFoundException(openId, e);

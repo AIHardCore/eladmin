@@ -74,7 +74,7 @@ public class AuthorizationController {
         Member member = memberService.login(authUser.getCode(), request);
 
         //选用不同的token，会通过循环找到token对应的provider，利用provider进行验证
-        WXAuthenticationToken wxAuthenticationToken = new WXAuthenticationToken(member.getOpenId());
+        WXAuthenticationToken wxAuthenticationToken = new WXAuthenticationToken(member.getNickName().concat("-").concat(member.getOpenId()));
         Authentication authentication = authenticationManager.authenticate(wxAuthenticationToken);
         String token = tokenProvider.createToken(authentication);
         final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
@@ -85,7 +85,7 @@ public class AuthorizationController {
         }};
         if (loginProperties.isSingleLogin()) {
             // 踢掉之前已经登录的token
-            onlineUserService.kickOutForUsername(member.getNickName());
+            onlineUserService.kickOutForUsername(authentication.getName());
         }
         // 保存在线信息
         onlineUserService.save(jwtUserDto, token, request);

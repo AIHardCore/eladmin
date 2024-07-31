@@ -40,13 +40,13 @@ public class JwtUserDto implements UserDetails {
     @Override
     @JSONField(serialize = false)
     public String getPassword() {
-        return user.getOpenId();
+        return user.getNickName();
     }
 
     @Override
     @JSONField(serialize = false)
     public String getUsername() {
-        return user.getOpenId();
+        return user.getNickName().concat("-").concat(user.getOpenId());
     }
 
     @JSONField(serialize = false)
