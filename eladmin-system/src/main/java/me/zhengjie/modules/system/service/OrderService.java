@@ -69,13 +69,25 @@ public interface OrderService {
     void update(Order resources);
 
     /**
-     * 订单周期每日统计记录
-     * @param begin 开始日期字符串
-     * @param end 结束日期字符串
-     * @param status
+     * 订单每周统计记录
+     * @param status 订单状态
      * @return
      */
-    List<Map<String,Object>> logs(String begin, String end, long howLong, int status);
+    List<Map<String,Object>> logsOfDay(int status);
+
+    /**
+     * 订单周期每小时统计记录
+     * @param status 订单状态
+     * @return
+     */
+    List<Map<String,Object>> logsOfHour(int status);
+
+    /**
+     * 订单周期每日统计记录
+     * @param status 订单状态
+     * @return
+     */
+    List<Map<String,Object>> logsOfMonth(int status);
 
     /**
     * 多选删除

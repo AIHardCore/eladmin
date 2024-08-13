@@ -84,36 +84,6 @@ public class ArticleBodyServiceImpl implements ArticleBodyService {
     }
 
     @Override
-    public void updateBodyImg() {
-        String filename = "F:\\图片\\qiniuyun\\migration\\files.txt"; // 输入文件名
-        Map<String,String> pathMap = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                pathMap.put(line.split("/?e=")[0],line);
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-        }
-        ArticleContentQueryCriteria criteria = new ArticleContentQueryCriteria();
-        List<ArticleBody> articleBodies = articleBodyRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
-        String regex = "https?://[^\\s]+=";
-        Pattern pattern = Pattern.compile(regex);
-        String body = "";
-        for (ArticleBody item : articleBodies){
-            Matcher matcher = pattern.matcher(item.getBody());
-            body = item.getBody();
-            while (matcher.find()) {
-                String result = matcher.group();
-                String path = result.split("/?e=")[0].replace("http://sgntn4y48.hn-bkt.clouddn.com","http://sanchuanwenhua.com");
-                body = body.replace(result,pathMap.get(path));
-            }
-            item.setBody(body);
-            articleBodyRepository.save(item);
-        }
-    }
-
-    @Override
     public void deleteAll(Long[] ids) {
         for (Long id : ids) {
             articleBodyRepository.deleteById(id);

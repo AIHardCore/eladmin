@@ -63,14 +63,6 @@ public class ArticleBodyController {
         return new ResponseEntity<>(articleBodyService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
-    /*@GetMapping("/updateBodyImg")
-    @ApiOperation("查询 文章正文")
-    @AnonymousGetMapping("/updateBodyImg")
-    public ResponseEntity<PageResult<ArticleBodyDto>> updateBodyImg(){
-        articleBodyService.updateBodyImg();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
-
     @PostMapping
     @ApiOperation("新增 文章正文")
     @PreAuthorize("@el.check('articleBody:add')")

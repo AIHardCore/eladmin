@@ -68,11 +68,6 @@ public interface ArticleBodyService {
     void update(ArticleBody resources);
 
     /**
-    * 编辑
-    */
-    void updateBodyImg();
-
-    /**
     * 多选删除
     * @param ids /
     */

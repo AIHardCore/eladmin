@@ -1,8 +1,5 @@
 package me.zhengjie.modules.system.rest;
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,19 +34,30 @@ public class OrderStatisticsController {
     @Log("查询订单记录统计")
     @ApiOperation("查询订单记录统计")
     public ResponseEntity<Map<String,Long>> statistics(){
-        Map<String,Long> map = new HashMap<>();
+        Map<String, Long> map = new HashMap<>();
         map.put("sum",orderRepository.sum());
         map.put("sumToday",orderRepository.sumToday());
+        map.put("sumMonth",orderRepository.sumMonth());
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @GetMapping("/logs/{status}")
-    @Log("查询订单周期每日统计")
-    @ApiOperation("查询订单周期每日统计")
+    @Log("查询订单每日统计")
+    @ApiOperation("查询订单每日统计")
     public ResponseEntity<List<Map<String,Object>>> logs(@PathVariable int status){
-        DateTime begin = DateUtil.beginOfWeek(new Date(),true);
-        DateTime end = DateUtil.endOfWeek(new Date(),true);
-        long howLong = DateUtil.between(begin,end, DateUnit.DAY) + 1;
-        return new ResponseEntity<>(orderService.logs(begin.toString(),end.toString(),howLong,status), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.logsOfDay(status), HttpStatus.OK);
+    }
+
+    @GetMapping("/logsOfMonth/{status}")
+    @Log("查询订单周期每月统计")
+    @ApiOperation("查询订单周期每月统计")
+    public ResponseEntity<List<Map<String,Object>>> logsOfMonth(@PathVariable int status){
+        return new ResponseEntity<>(orderService.logsOfMonth(status), HttpStatus.OK);
+    }
+    @GetMapping("/logsOfHour/{status}")
+    @Log("查询订单周期每小时统计")
+    @ApiOperation("查询订单周期每小时统计")
+    public ResponseEntity<List<Map<String,Object>>> logsOfHour(@PathVariable int status){
+        return new ResponseEntity<>(orderService.logsOfHour(status), HttpStatus.OK);
     }
 }

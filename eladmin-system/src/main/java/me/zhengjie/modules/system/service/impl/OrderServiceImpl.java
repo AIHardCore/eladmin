@@ -1,18 +1,18 @@
 /*
-*  Copyright 2019-2020 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+ *  Copyright 2019-2020 Zheng Jie
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package me.zhengjie.modules.system.service.impl;
 
 import lombok.RequiredArgsConstructor;
@@ -37,11 +37,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* @website https://eladmin.vip
-* @description 服务实现
-* @author hardcore
-* @date 2024-06-30
-**/
+ * @website https://eladmin.vip
+ * @description 服务实现
+ * @author hardcore
+ * @date 2024-06-30
+ **/
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -85,35 +85,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Map<String, Object>> logs(String begin, String end, long howLong, int status) {
+    public List<Map<String, Object>> logsOfDay(int status) {
         String param =  String.format("and status = %s ",status);
         String sql =
-                "select " +
-                        " t3.days, " +
-                        " max(t3.num) num " +
-                        "from " +
-                        " ( " +
-                        " SELECT " +
-                        "  @cdate := date_add(@cdate, interval -1 day) days, " +
-                        "  0 as num " +
-                        " from " +
-                        "  ( " +
-                        "  SELECT " +
-                        "   @cdate := DATE_ADD( '" + end.split(" ")[0] + "', INTERVAL + 1 day) " +
-                        "  from " +
-                        "   app_order " +
-                        "  limit " + howLong + " ) t1 " +
-                        "UNION ALL (" +
-                        //以下为你所需要查询得业务表根据日期统计数据-begin
-                        "select DATE_FORMAT(create_time, '%Y-%m-%d') AS dateStr,sum(amount) div 100 as num from app_order " +
-                        "where create_time BETWEEN '" + begin + "' and '" + end + "' " + param +
-                        "group by DATE_FORMAT(create_time, '%Y-%m-%d') " +
-                        //以下为你所需要查询得业务表根据日期统计数据-end
-                        ")) t3 " +
-                        "where " +
-                        " t3.days between '"+ begin.split(" ")[0] +"' and '"+ end.split(" ")[0] +"' " +
-                        "GROUP BY " +
-                        " t3.days order by t3.days asc";
+                "select t3.times, max(t3.num) num from  (\n" +
+                        " SELECT DATE_FORMAT(@cdate := date_add(@cdate,interval -1 day), '%Y年%m月%d日') times, 0 as num from   \n" +
+                        "(SELECT @cdate := DATE_ADD(last_day(curdate()), INTERVAL 1 day) from  app_order limit 31 )  t1 \n" +
+                        " UNION ALL\n" +
+                        "select DATE_FORMAT(create_time, '%Y年%m月%d日') as days,sum(amount) / 100 as num from app_order where create_time between date_add(curdate(),interval-day(curdate())+1 day) and last_day(curdate()) "+param+" GROUP BY DATE_FORMAT(create_time, '%Y年%m月%d日')\n" +
+                        ") t3  GROUP BY t3.times order by t3.times asc;";
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    @Override
+    public List<Map<String, Object>> logsOfHour(int status) {
+        String param =  String.format("and status = %s ",status);
+        String sql =
+                "select t3.times, max(t3.num) num from  (\n" +
+                        " SELECT DATE_FORMAT(@cdate := date_add(@cdate,interval -1 hour),'%H:00') times, 0 as num from\n" +
+                        "(SELECT @cdate := DATE_ADD( DATE_FORMAT(now(), '%Y-%m-%d 23'), INTERVAL 1 hour) from  app_order limit 24 )  t1\n" +
+                        " UNION ALL\n" +
+                        "select DATE_FORMAT(create_time, '%H:00') as hours,sum(amount) / 100 as num from app_order where create_time between DATE_FORMAT(now(), '%Y-%m-%d 00') and DATE_FORMAT(now(), '%Y-%m-%d 23') "+param+" GROUP BY DATE_FORMAT(create_time, '%H:00')\n" +
+                        ") t3 group by t3.times order by t3.times asc;";
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    @Override
+    public List<Map<String, Object>> logsOfMonth(int status) {
+        String param =  String.format("and status = %s ",status);
+        String sql =
+                "select t3.times, max(t3.num) num from  (\n" +
+                        " SELECT DATE_FORMAT(@cdate := date_add(@cdate,interval -1 month),'%Y年%m月') times, 0 as num from \n" +
+                        "(SELECT @cdate := DATE_ADD( DATE_FORMAT(now(), '%Y-12-01'), INTERVAL 1 month) from  app_order limit 12 )  t1 \n" +
+                        " UNION ALL \n" +
+                        "select DATE_FORMAT(create_time, '%Y年%m月') as times,sum(amount) / 100 as num from app_order where create_time between DATE_FORMAT(now(), '%Y-01-01 00:00:00') and DATE_FORMAT(now(), '%Y-12-31 23:59:59') "+param+" GROUP BY DATE_FORMAT(create_time, '%Y年%m月')\n" +
+                        ") t3 group by t3.times order by t3.times asc;";
         return jdbcTemplate.queryForList(sql);
     }
 

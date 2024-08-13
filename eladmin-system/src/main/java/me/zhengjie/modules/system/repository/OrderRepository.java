@@ -26,9 +26,12 @@ import org.springframework.data.jpa.repository.Query;
 * @date 2024-06-30
 **/
 public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecificationExecutor<Order> {
-    @Query(value = "select ifnull(sum(amount),0) div 100 from app_order where status = 0",nativeQuery = true)
+    @Query(value = "select ifnull(sum(amount),0) / 100 from app_order where status = 0",nativeQuery = true)
     long sum();
 
-    @Query(value = "select ifnull(sum(amount),0) div 100 from app_order where status = 0 and create_time >= date(now())",nativeQuery = true)
+    @Query(value = "select ifnull(sum(amount),0) / 100 from app_order where status = 0 and create_time >= now()",nativeQuery = true)
     long sumToday();
+
+    @Query(value = "select ifnull(sum(amount),0) / 100 from app_order where status = 0 and create_time >= date_format(now(),'%Y-%m-01')",nativeQuery = true)
+    long sumMonth();
 }
