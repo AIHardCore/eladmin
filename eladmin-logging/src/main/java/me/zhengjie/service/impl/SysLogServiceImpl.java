@@ -197,12 +197,12 @@ public class SysLogServiceImpl implements SysLogService {
         }
         String sql =
                 "select " +
-                " t3.days, " +
+                " t3.times, " +
                 " max(t3.num) num " +
                 "from " +
                 " ( " +
                 " SELECT " +
-                "  @cdate := date_add(@cdate, interval -1 day) days, " +
+                "  DATE_FORMAT(@cdate := date_add(@cdate, interval -1 day),'%Y年%m月%d日') times, " +
                 "  0 as num " +
                 " from " +
                 "  ( " +
@@ -213,15 +213,13 @@ public class SysLogServiceImpl implements SysLogService {
                 "  limit " + howLong + " ) t1 " +
                 "UNION ALL (" +
                 //以下为你所需要查询得业务表根据日期统计数据-begin
-                "select DATE_FORMAT(create_time, '%Y-%m-%d') AS dateStr,ifnull(count(log_id),0) as num from sys_log " +
+                "select DATE_FORMAT(create_time, '%Y年%m月%d日') AS dateStr,ifnull(count(log_id),0) as num from sys_log " +
                 "where description = 'APP用户登录' and create_time BETWEEN '" + begin + "' and '" + end + "'" + param +
-                "group by DATE_FORMAT(create_time, '%Y-%m-%d') " +
+                "group by DATE_FORMAT(create_time, '%Y年%m月%d日') " +
                 //以下为你所需要查询得业务表根据日期统计数据-end
                 ")) t3 " +
-                "where " +
-                " t3.days between '"+ begin.split(" ")[0] +"' and '"+ end.split(" ")[0] +"' " +
                 "GROUP BY " +
-                " t3.days order by t3.days asc";
+                " t3.times order by t3.times asc";
         return jdbcTemplate.queryForList(sql);
     }
 
