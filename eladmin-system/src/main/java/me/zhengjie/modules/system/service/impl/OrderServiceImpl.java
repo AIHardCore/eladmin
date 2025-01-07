@@ -98,6 +98,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Map<String, Object>> logsOfPreMonthDay(int status) {
+        String param =  String.format("and status = %s ",status);
+        String sql =
+                "select t3.times, max(t3.num) num from  (\n" +
+                        " SELECT DATE_FORMAT(@cdate := date_add(@cdate,interval -1 day), '%Y年%m月%d日') times, 0 as num from   \n" +
+                        "(SELECT @cdate := DATE_ADD(last_day(date_add(curdate(),interval -1 month)), INTERVAL 1 day) from  app_order limit 31 )  t1 \n" +
+                        " UNION ALL\n" +
+                        "select DATE_FORMAT(create_time, '%Y年%m月%d日') as days,sum(amount) / 100 as num from app_order where create_time between date_add(date_add(curdate(),interval -1 month),interval-day(date_add(curdate(),interval -1 month))+1 day) and last_day(date_add(curdate(),interval -1 month)) "+param+" GROUP BY DATE_FORMAT(create_time, '%Y年%m月%d日')\n" +
+                        ") t3  GROUP BY t3.times order by t3.times asc;";
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    @Override
     public List<Map<String, Object>> logsOfHour(int status) {
         String param =  String.format("and status = %s ",status);
         String sql =

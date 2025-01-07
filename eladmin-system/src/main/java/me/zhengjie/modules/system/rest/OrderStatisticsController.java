@@ -38,6 +38,7 @@ public class OrderStatisticsController {
         map.put("sum",orderRepository.sum());
         map.put("sumToday",orderRepository.sumToday());
         map.put("sumMonth",orderRepository.sumMonth());
+        map.put("sumPreMonth",orderRepository.sumPreMonth());
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -46,6 +47,13 @@ public class OrderStatisticsController {
     @ApiOperation("查询订单每日统计")
     public ResponseEntity<List<Map<String,Object>>> logs(@PathVariable int status){
         return new ResponseEntity<>(orderService.logsOfDay(status), HttpStatus.OK);
+    }
+
+    @GetMapping("/logsOfMonth/pre/{status}")
+    @Log("查询订单每日统计")
+    @ApiOperation("查询订单每日统计")
+    public ResponseEntity<List<Map<String,Object>>> logsOfPreMonth(@PathVariable int status){
+        return new ResponseEntity<>(orderService.logsOfPreMonthDay(status), HttpStatus.OK);
     }
 
     @GetMapping("/logsOfMonth/{status}")

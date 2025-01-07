@@ -69,11 +69,18 @@ public interface OrderService {
     void update(Order resources);
 
     /**
-     * 订单每周统计记录
+     * 订单本月每日统计记录
      * @param status 订单状态
      * @return
      */
     List<Map<String,Object>> logsOfDay(int status);
+
+    /**
+     * 订单上月每日统计记录
+     * @param status 订单状态
+     * @return
+     */
+    List<Map<String,Object>> logsOfPreMonthDay(int status);
 
     /**
      * 订单周期每小时统计记录
@@ -83,7 +90,7 @@ public interface OrderService {
     List<Map<String,Object>> logsOfHour(int status);
 
     /**
-     * 订单周期每日统计记录
+     * 订单周期每月统计记录
      * @param status 订单状态
      * @return
      */

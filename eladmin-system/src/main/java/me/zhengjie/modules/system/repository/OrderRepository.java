@@ -34,4 +34,7 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
 
     @Query(value = "select ifnull(sum(amount),0) / 100 from app_order where status = 0 and create_time >= DATE_FORMAT(now(),'%Y-%m-01')",nativeQuery = true)
     long sumMonth();
+
+    @Query(value = "select ifnull(sum(amount),0) / 100 from app_order where status = 0 and create_time between date_add(date_add(curdate(),interval -1 month),interval-day(date_add(curdate(),interval -1 month))+1 day) and last_day(date_add(curdate(),interval -1 month))",nativeQuery = true)
+    long sumPreMonth();
 }
