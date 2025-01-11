@@ -61,7 +61,8 @@ public class SpecialServiceImpl implements SpecialService {
 
     @Override
     public List<SpecialDto> queryAll(SpecialQueryCriteria criteria){
-        return specialMapper.toDto(specialRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),Sort.by("sort")));
+        Sort sort = Sort.by(Sort.Direction.ASC, "sort").and(Sort.by(Sort.Direction.DESC,"id"));
+        return specialMapper.toDto(specialRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
     }
 
     @Override
