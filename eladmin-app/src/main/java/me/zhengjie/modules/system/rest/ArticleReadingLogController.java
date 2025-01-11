@@ -19,10 +19,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
+import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.system.service.ArticleReadingLogService;
 import me.zhengjie.modules.system.service.dto.ArticleReadingLogDto;
 import me.zhengjie.modules.system.service.dto.ArticleReadingLogQueryCriteria;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +51,8 @@ public class ArticleReadingLogController {
     @ApiOperation("查询阅读记录")
     @PreAuthorize("@el.check('articleReadingLog:list')")
     public ResponseEntity<PageResult<ArticleReadingLogDto>> queryArticleReadingLog(ArticleReadingLogQueryCriteria criteria, Pageable pageable){
+        JwtUserDto jwtUserDto = (JwtUserDto) SecurityUtils.getCurrentUser();
+        criteria.setOpenId(jwtUserDto.getOpenId());
         return new ResponseEntity<>(articleReadingLogService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 }
