@@ -49,6 +49,10 @@ public class JwtUserDto implements UserDetails {
         return user.getNickName().concat("-").concat(user.getOpenId());
     }
 
+    public String getOpenId(){
+        return user.getOpenId();
+    }
+
     @JSONField(serialize = false)
     @Override
     public boolean isAccountNonExpired() {
