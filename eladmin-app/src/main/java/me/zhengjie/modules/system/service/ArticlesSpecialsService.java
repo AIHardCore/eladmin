@@ -15,15 +15,12 @@
 */
 package me.zhengjie.modules.system.service;
 
-import me.zhengjie.modules.system.domain.ArticlesSpecials;
 import me.zhengjie.modules.system.service.dto.ArticlesSpecialsDto;
 import me.zhengjie.modules.system.service.dto.ArticlesSpecialsQueryCriteria;
 import org.springframework.data.domain.Pageable;
-import java.util.Map;
 import java.util.List;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
 import me.zhengjie.utils.PageResult;
+import org.springframework.data.domain.Sort;
 
 /**
 * @website https://eladmin.vip
@@ -46,7 +43,7 @@ public interface ArticlesSpecialsService {
     * @param criteria 条件参数
     * @return List<ArticlesSpecialsDto>
     */
-    List<ArticlesSpecialsDto> queryAll(ArticlesSpecialsQueryCriteria criteria);
+    List<ArticlesSpecialsDto> queryAll(ArticlesSpecialsQueryCriteria criteria, Sort sort);
 
     /**
      * 根据ID查询

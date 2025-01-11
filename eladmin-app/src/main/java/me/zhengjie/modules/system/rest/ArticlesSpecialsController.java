@@ -16,20 +16,16 @@
 package me.zhengjie.modules.system.rest;
 
 import me.zhengjie.annotation.Log;
-import me.zhengjie.modules.system.domain.ArticlesSpecials;
 import me.zhengjie.modules.system.service.ArticlesSpecialsService;
 import me.zhengjie.modules.system.service.dto.ArticlesSpecialsQueryCriteria;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
-import java.io.IOException;
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 import me.zhengjie.utils.PageResult;
 import me.zhengjie.modules.system.service.dto.ArticlesSpecialsDto;
 
@@ -57,6 +53,7 @@ public class ArticlesSpecialsController {
     @Log("查询内丹学-文章")
     @ApiOperation("查询内丹学-文章")
     public ResponseEntity<List<ArticlesSpecialsDto>> all(ArticlesSpecialsQueryCriteria criteria){
-        return new ResponseEntity<>(articlesSpecialsService.queryAll(criteria),HttpStatus.OK);
+        Sort sort = Sort.by(Sort.Direction.ASC, "sort").and(Sort.by(Sort.Direction.DESC,"id"));
+        return new ResponseEntity<>(articlesSpecialsService.queryAll(criteria, sort),HttpStatus.OK);
     }
 }
