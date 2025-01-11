@@ -26,7 +26,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @website https://eladmin.vip
@@ -37,18 +36,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@NamedEntityGraph(
-        name = "Article.withSpecials",
-        attributeNodes = {
-                @NamedAttributeNode("specials")
-        },
-        subgraphs = {@NamedSubgraph(
-                name = "special-article",
-                attributeNodes = {
-                        @NamedAttributeNode(value = "Special.withArticles")
-                }
-        )}
-)
 @Table(name="app_article")
 public class Article extends BaseEntity implements Serializable {
 
@@ -57,13 +44,6 @@ public class Article extends BaseEntity implements Serializable {
     @Column(name = "`id`")
     @ApiModelProperty(value = "id")
     private Long id;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @ApiModelProperty(value = "文章专栏")
-    @JoinTable(name = "app_articles_specials",
-            joinColumns = {@JoinColumn(name = "article_id",referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "special_id",referencedColumnName = "id")})
-    private Set<Special> specials;
 
     @Column(name = "`title`",nullable = false)
     @NotBlank

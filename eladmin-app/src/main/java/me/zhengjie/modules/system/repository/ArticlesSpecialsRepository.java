@@ -15,20 +15,14 @@
 */
 package me.zhengjie.modules.system.repository;
 
-import com.sun.istack.Nullable;
-import me.zhengjie.modules.system.domain.Special;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.EntityGraph;
+import me.zhengjie.modules.system.domain.ArticlesSpecials;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
 * @website https://eladmin.vip
 * @author hardcore
-* @date 2024-06-25
+* @date 2025-01-11
 **/
-public interface SpecialRepository extends JpaRepository<Special, Long>, JpaSpecificationExecutor<Special> {
-    Page<Special> findAll(@Nullable Specification<Special> specification, Pageable pageable);
+public interface ArticlesSpecialsRepository extends JpaRepository<ArticlesSpecials, Long>, JpaSpecificationExecutor<ArticlesSpecials> {
 }

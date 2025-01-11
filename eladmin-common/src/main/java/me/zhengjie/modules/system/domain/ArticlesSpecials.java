@@ -15,6 +15,7 @@
 */
 package me.zhengjie.modules.system.domain;
 
+import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.ApiModelProperty;
 import cn.hutool.core.bean.copier.CopyOptions;
@@ -22,24 +23,21 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
-
+import org.hibernate.annotations.*;
+import java.sql.Timestamp;
 import java.io.Serializable;
+import me.zhengjie.base.BaseEntity;
 
 /**
 * @website https://eladmin.vip
 * @description /
 * @author hardcore
-* @date 2024-06-25
+* @date 2025-01-09
 **/
 @Entity
-@Getter
-@Setter
-@Table(name="app_special")
-public class Special extends BaseEntity implements Serializable {
+@Data
+@Table(name="app_articles_specials")
+public class ArticlesSpecials extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,30 +45,21 @@ public class Special extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "id")
     private Long id;
 
-    @Column(name = "`name`",nullable = false)
-    @NotBlank
-    @ApiModelProperty(value = "名称")
-    private String name;
+    @ApiModelProperty(value = "文章")
+    @JoinColumn(name = "article_id")
+    @ManyToOne(fetch=FetchType.LAZY)
+    private Article article;
 
-    @Column(name = "`desc`",nullable = false)
-    @NotBlank
-    @ApiModelProperty(value = "描述")
-    private String desc;
+    @Column(name = "`special_id`")
+    @ApiModelProperty(value = "内丹学")
+    private Long specialId;
 
-    @Column(name = "`cover`",nullable = false)
-    @NotBlank
-    @ApiModelProperty(value = "封面")
-    private String cover;
-
-    @Column(name = "`sort`")
+    @Column(name = "`sort`",nullable = false)
+    @NotNull
     @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    @Column(name = "`enabled`")
-    @ApiModelProperty(value = "状态")
-    private Boolean enabled;
-
-    public void copy(Special source){
+    public void copy(ArticlesSpecials source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

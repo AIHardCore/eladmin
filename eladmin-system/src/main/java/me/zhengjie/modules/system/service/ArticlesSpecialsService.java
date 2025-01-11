@@ -15,22 +15,23 @@
 */
 package me.zhengjie.modules.system.service;
 
-import me.zhengjie.modules.system.domain.Article;
-import me.zhengjie.modules.system.service.dto.*;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.modules.system.domain.ArticlesSpecials;
+import me.zhengjie.modules.system.service.dto.ArticlesSpecialsDto;
+import me.zhengjie.modules.system.service.dto.ArticlesSpecialsQueryCriteria;
 import org.springframework.data.domain.Pageable;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.Map;
 import java.util.List;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import me.zhengjie.utils.PageResult;
 
 /**
 * @website https://eladmin.vip
 * @description 服务接口
 * @author hardcore
-* @date 2024-06-29
+* @date 2025-01-09
 **/
-public interface ArticleService {
+public interface ArticlesSpecialsService {
 
     /**
     * 查询数据分页
@@ -38,53 +39,33 @@ public interface ArticleService {
     * @param pageable 分页参数
     * @return Map<String,Object>
     */
-    PageResult<ArticleDto> queryAll(ArticleQueryCriteria criteria, Pageable pageable);
+    PageResult<ArticlesSpecialsDto> queryAll(ArticlesSpecialsQueryCriteria criteria, Pageable pageable);
 
     /**
     * 查询所有数据不分页
     * @param criteria 条件参数
-    * @return List<ArticleDto>
+    * @return List<ArticlesSpecialsDto>
     */
-    List<ArticleDto> queryAll(ArticleQueryCriteria criteria);
-
-    /**
-     * 查询所有不在内丹学中的数据不分页
-     * @param criteria 条件参数
-     * @return List<ArticleDto>
-     */
-    List<ArticleDto> queryAllUnSelectedWithSpecial(ArticlesSpecialsQueryCriteria criteria);
-
-    /**
-     * 查询所有不在古科学中的数据不分页
-     * @param criteria 条件参数
-     * @return List<ArticleDto>
-     */
-    List<ArticleDto> queryAllUnSelectedWithRank(RankQueryCriteria criteria);
+    List<ArticlesSpecialsDto> queryAll(ArticlesSpecialsQueryCriteria criteria);
 
     /**
      * 根据ID查询
-     * @param id ID
-     * @return ArticleDto
+     * @param specialId ID
+     * @return ArticlesSpecialsDto
      */
-    ArticleDto findById(Long id);
+    ArticlesSpecialsDto findById(Long specialId);
 
     /**
     * 创建
     * @param resources /
     */
-    void create(Article resources);
+    void create(ArticlesSpecials resources);
 
     /**
     * 编辑
     * @param resources /
     */
-    void update(Article resources);
-
-    /**
-     * 启用/禁用
-     * @param resources /
-     */
-    void enabled(Article resources);
+    void update(ArticlesSpecials resources);
 
     /**
     * 多选删除
@@ -98,5 +79,5 @@ public interface ArticleService {
     * @param response /
     * @throws IOException /
     */
-    void download(List<ArticleDto> all, HttpServletResponse response) throws IOException;
+    void download(List<ArticlesSpecialsDto> all, HttpServletResponse response) throws IOException;
 }

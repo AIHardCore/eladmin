@@ -22,6 +22,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /**
 * @website https://eladmin.vip
@@ -30,6 +33,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 **/
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
-    @EntityGraph(value = "Article.withSpecials", type = EntityGraph.EntityGraphType.LOAD)
     Page<Article> findAll(Specification<Article> specification, Pageable pageable);
+
+    @Query(value = "select * from app_article a where NOT EXISTS(select * from app_articles_specials s where a.id = s.article_id and special_id = ?1)", nativeQuery = true)
+    List<Article> queryAllUnSelectedWithSpecial(Long specialId);
+
+    @Query(value = "select * from app_article a where NOT EXISTS(select * from app_rank s where a.id = s.article and s.type = ?1)", nativeQuery = true)
+    List<Article> queryAllUnSelectedWithRank(int type);
 }

@@ -15,56 +15,42 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Data;
-import me.zhengjie.modules.system.domain.Special;
-
 import java.sql.Timestamp;
 import java.io.Serializable;
-import java.util.Set;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+import me.zhengjie.modules.system.domain.Article;
 
 /**
 * @website https://eladmin.vip
 * @description /
 * @author hardcore
-* @date 2024-06-29
+* @date 2025-01-09
 **/
 @Data
-public class ArticleDto implements Serializable {
+public class ArticlesSpecialsDto implements Serializable {
 
-    /** 防止精度丢失 */
-    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long id;
 
-    /** 标题 */
-    private String title;
+    /** 文章 */
+    private ArticleDto article;
 
-    /** 封面 */
-    private String cover;
-
-    /** 预览内容 */
-    private String preview;
-
-    /** 内容 */
-    private String body = "";
-
-    /** 状态 */
-    private Boolean enabled;
+    /** 内丹学 */
+    /** 防止精度丢失 */
+    @JSONField(serializeUsing = ToStringSerializer.class)
+    private Long specialId;
 
     /** 排序 */
     private Integer sort;
 
-    /** 阅读量 */
-    private Integer reading;
-
-    /** 创建人 */
+    /** 创建者 */
     private String createBy;
 
-    /** 修改人 */
+    /** 更新者 */
     private String updateBy;
 
-    /** 创建时间 */
+    /** 创建日期 */
     private Timestamp createTime;
 
     /** 更新时间 */

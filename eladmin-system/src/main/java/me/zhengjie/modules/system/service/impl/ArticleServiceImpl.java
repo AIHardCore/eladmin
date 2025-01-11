@@ -21,9 +21,7 @@ import me.zhengjie.modules.system.domain.ArticleBody;
 import me.zhengjie.modules.system.repository.ArticleBodyRepository;
 import me.zhengjie.modules.system.repository.ArticleRepository;
 import me.zhengjie.modules.system.service.ArticleService;
-import me.zhengjie.modules.system.service.dto.ArticleDto;
-import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
-import me.zhengjie.modules.system.service.dto.SpecialSmallDto;
+import me.zhengjie.modules.system.service.dto.*;
 import me.zhengjie.modules.system.service.mapstruct.ArticleMapper;
 import me.zhengjie.utils.*;
 import org.springframework.data.domain.Page;
@@ -62,6 +60,18 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<ArticleDto> queryAll(ArticleQueryCriteria criteria){
         return articleMapper.toDto(articleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+    }
+
+    @Override
+    public List<ArticleDto> queryAllUnSelectedWithSpecial(ArticlesSpecialsQueryCriteria criteria) {
+        List<Article> articles = articleRepository.queryAllUnSelectedWithSpecial(criteria.getSpecialId());
+        return articleMapper.toDto(articles);
+    }
+
+    @Override
+    public List<ArticleDto> queryAllUnSelectedWithRank(RankQueryCriteria criteria) {
+        List<Article> articles = articleRepository.queryAllUnSelectedWithRank(criteria.getType());
+        return articleMapper.toDto(articles);
     }
 
     @Override
@@ -114,11 +124,9 @@ public class ArticleServiceImpl implements ArticleService {
     public void download(List<ArticleDto> all, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (ArticleDto article : all) {
-            List<String> specials = article.getSpecials().stream().map(SpecialSmallDto::getName).collect(Collectors.toList());
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("标题", article.getTitle());
             map.put("封面", article.getCover());
-            map.put("专栏", specials);
             map.put("预览内容", article.getPreview());
             //map.put("内容", article.getContent());
             map.put("状态", article.getEnabled() ? "启用" : "禁用");

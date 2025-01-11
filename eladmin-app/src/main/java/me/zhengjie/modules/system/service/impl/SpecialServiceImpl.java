@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.system.repository.SpecialRepository;
 import me.zhengjie.modules.system.service.SpecialService;
 import me.zhengjie.modules.system.service.mapstruct.SpecialMapper;
+import org.hibernate.criterion.Order;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -59,7 +61,7 @@ public class SpecialServiceImpl implements SpecialService {
 
     @Override
     public List<SpecialDto> queryAll(SpecialQueryCriteria criteria){
-        return specialMapper.toDto(specialRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder)));
+        return specialMapper.toDto(specialRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),Sort.by("sort")));
     }
 
     @Override

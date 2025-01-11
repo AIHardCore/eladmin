@@ -23,6 +23,8 @@ import me.zhengjie.modules.system.domain.Article;
 import me.zhengjie.modules.system.service.ArticleService;
 import me.zhengjie.modules.system.service.dto.ArticleDto;
 import me.zhengjie.modules.system.service.dto.ArticleQueryCriteria;
+import me.zhengjie.modules.system.service.dto.ArticlesSpecialsQueryCriteria;
+import me.zhengjie.modules.system.service.dto.RankQueryCriteria;
 import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -63,11 +65,18 @@ public class ArticleController {
         return new ResponseEntity<>(articleService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
-    @GetMapping("/find")
-    @ApiOperation("查询文章")
+    @GetMapping("/queryAllUnSelectedWithSpecial")
+    @ApiOperation("查询所有不在内丹学中的数据")
     @PreAuthorize("@el.check('article:list')")
-    public ResponseEntity<List<ArticleDto>> find(ArticleQueryCriteria criteria){
-        return new ResponseEntity<>(articleService.queryAll(criteria),HttpStatus.OK);
+    public ResponseEntity<List<ArticleDto>> queryAllUnSelectedWithSpecial(ArticlesSpecialsQueryCriteria criteria){
+        return new ResponseEntity<>(articleService.queryAllUnSelectedWithSpecial(criteria),HttpStatus.OK);
+    }
+
+    @GetMapping("/queryAllUnSelectedWithRank")
+    @ApiOperation("查询所有不在古科学中的数据")
+    @PreAuthorize("@el.check('article:list')")
+    public ResponseEntity<List<ArticleDto>> queryAllUnSelectedWithRank(RankQueryCriteria criteria){
+        return new ResponseEntity<>(articleService.queryAllUnSelectedWithRank(criteria),HttpStatus.OK);
     }
 
     @PostMapping
