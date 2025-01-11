@@ -15,6 +15,8 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Data;
 import me.zhengjie.modules.system.domain.Special;
 

@@ -50,11 +50,6 @@ public class Special extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "id")
     private Long id;
 
-    @JSONField(serialize = false)
-    @ManyToMany(mappedBy = "specials",fetch = FetchType.LAZY)
-    @ApiModelProperty(value = "文章", hidden = true)
-    private Set<Article> articles;
-
     @Column(name = "`name`",nullable = false)
     @NotBlank
     @ApiModelProperty(value = "名称")

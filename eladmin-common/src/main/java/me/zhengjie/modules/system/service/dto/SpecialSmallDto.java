@@ -15,6 +15,8 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,7 +31,9 @@ import java.sql.Timestamp;
 @Data
 public class SpecialSmallDto implements Serializable {
 
-    private Integer id;
+    /** 防止精度丢失 */
+    @JSONField(serializeUsing = ToStringSerializer.class)
+    private Long id;
 
     /** 名称 */
     private String name;

@@ -15,6 +15,8 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseDTO;
@@ -33,6 +35,8 @@ import java.math.BigDecimal;
 @Setter
 public class OrderDto extends BaseDTO implements Serializable {
 
+    /** 防止精度丢失 */
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long id;
 
     /** 微信订单号 */

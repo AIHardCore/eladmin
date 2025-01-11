@@ -15,6 +15,8 @@
 */
 package me.zhengjie.modules.system.service.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Data;
 import me.zhengjie.base.BaseDTO;
 
@@ -30,12 +32,16 @@ import java.io.Serializable;
 @Data
 public class BannerDto extends BaseDTO implements Serializable {
 
+    /** 防止精度丢失 */
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long id;
 
     /** 图片 */
     private String img;
 
     /** 跳转地址 */
+    /** 防止精度丢失 */
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long special;
 
     /** 排序 */
